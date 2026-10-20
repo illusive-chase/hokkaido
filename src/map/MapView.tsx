@@ -566,7 +566,8 @@ export default function MapView(props: MapViewProps) {
     const map = mapRef.current
     if (!map) return
     const apply = () => {
-      for (const l of [...baseLayers(props.palette), ...(ready.current ? overlayLayers(props.palette) : [])]) {
+      const palette = propsRef.current.palette
+      for (const l of [...baseLayers(palette), ...(ready.current ? overlayLayers(palette) : [])]) {
         if (!map.getLayer(l.id)) continue
         for (const [k, v] of Object.entries((l as { paint?: Record<string, unknown> }).paint ?? {})) {
           map.setPaintProperty(l.id, k, v)
@@ -574,7 +575,9 @@ export default function MapView(props: MapViewProps) {
       }
       if (ready.current) sync()
     }
-    if (map.isStyleLoaded()) apply()
+    // isStyleLoaded() can temporarily be false while sources or tiles update. The
+    // map-level load event only fires once, so waiting for it again loses theme changes.
+    if (ready.current) apply()
     else map.once('load', apply)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.palette])

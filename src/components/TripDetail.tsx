@@ -6,9 +6,24 @@ import { Img, Lightbox, NoteLine, Section } from './bits'
 interface RawText {
   desc: string
   commentTotal: number | null
-  comments: { user: string; isAuthor: boolean; pinned?: boolean; content: string; ip: string; likes: number; replyTotal?: number; replies: { user: string; isAuthor: boolean; content: string }[] }[]
+  comments: RawComment[]
   /** 旧版 public/local/text 里没有这个字段，当作未采集 */
   commentSource?: { full: boolean; complete?: boolean; at?: string }
+}
+
+interface RawReply {
+  user: string
+  isAuthor: boolean
+  content: string
+  time?: string | null
+  ip?: string | null
+  likes?: number
+}
+
+interface RawComment extends RawReply {
+  pinned?: boolean
+  replyTotal?: number
+  replies: RawReply[]
 }
 
 function commentHeading(raw: RawText) {
@@ -16,6 +31,30 @@ function commentHeading(raw: RawText) {
   const total = raw.commentTotal ?? '?'
   if (!raw.commentSource?.full) return `评论（未登录只能拿到前几条，${got} / ${total} 条）`
   return `评论（插件采集${raw.commentSource.complete ? '，已翻完' : '，未翻完'}，${got} / ${total} 条）`
+}
+
+function commentDate(iso?: string | null) {
+  if (!iso) return null
+  const d = new Date(iso)
+  if (Number.isNaN(d.getTime())) return null
+  return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`
+}
+
+function CommentMeta({ item }: { item: RawReply }) {
+  const date = commentDate(item.time)
+  if (!date && !item.ip && !item.likes) return null
+  return (
+    <div className="comment-meta">
+      {date && <span>{date}</span>}
+      {item.ip && <span>{item.ip}</span>}
+      {!!item.likes && <span>赞 {fmtCount(item.likes)}</span>}
+    </div>
+  )
+}
+
+function CommentAvatar({ user, author = false }: { user: string; author?: boolean }) {
+  const label = [...user.trim()][0] ?? '?'
+  return <span className={`comment-avatar ${author ? 'author' : ''}`} aria-hidden="true">{label}</span>
 }
 
 export default function TripDetail({ t, onBack, onPlace, onHoverPlace, onCompare, compareSlot, compareFull, onTransit }: {
@@ -175,14 +214,43 @@ export default function TripDetail({ t, onBack, onPlace, onHoverPlace, onCompare
           <div className="raw">
             <pre>{raw.desc}</pre>
             <h4>{commentHeading(raw)}</h4>
-            <ul>
+            <ul className="comment-list">
               {raw.comments.map((c, k) => (
-                <li key={k}>
-                  <p><b className={c.isAuthor ? 'is-author' : ''}>{c.user}{c.isAuthor ? '（作者）' : ''}{c.pinned ? '（置顶）' : ''}</b>{c.content}</p>
-                  {c.replies.map((r, j) => (
-                    <p key={j} className="reply"><b className={r.isAuthor ? 'is-author' : ''}>{r.user}{r.isAuthor ? '（作者）' : ''}</b>{r.content}</p>
-                  ))}
-                  {(c.replyTotal ?? 0) > c.replies.length && <p className="reply muted">还有 {(c.replyTotal ?? 0) - c.replies.length} 条回复没拿到</p>}
+                <li key={k} className="comment-thread">
+                  <article className="comment-item comment-root">
+                    <CommentAvatar user={c.user} author={c.isAuthor} />
+                    <div className="comment-main">
+                      <header className="comment-head">
+                        <b>{c.user || '未知用户'}</b>
+                        {c.isAuthor && <span className="comment-badge author">作者</span>}
+                        {c.pinned && <span className="comment-badge pinned">置顶</span>}
+                        <span className="comment-floor">{k + 1} 楼</span>
+                      </header>
+                      <p className={c.content ? 'comment-content' : 'comment-content muted'}>{c.content || '此评论没有文字内容'}</p>
+                      <CommentMeta item={c} />
+                    </div>
+                  </article>
+                  {(c.replies.length > 0 || (c.replyTotal ?? 0) > c.replies.length) && (
+                    <div className="comment-replies" aria-label={`${c.user} 的回复`}>
+                      {c.replies.map((r, j) => (
+                        <article key={j} className="comment-item comment-reply">
+                          <CommentAvatar user={r.user} author={r.isAuthor} />
+                          <div className="comment-main">
+                            <header className="comment-head">
+                              <b>{r.user || '未知用户'}</b>
+                              {r.isAuthor && <span className="comment-badge author">作者</span>}
+                              <span className="reply-number">回复 {j + 1}</span>
+                            </header>
+                            <p className={r.content ? 'comment-content' : 'comment-content muted'}>{r.content || '此回复没有文字内容'}</p>
+                            <CommentMeta item={r} />
+                          </div>
+                        </article>
+                      ))}
+                      {(c.replyTotal ?? 0) > c.replies.length && (
+                        <p className="comment-missing">还有 {(c.replyTotal ?? 0) - c.replies.length} 条回复未采集</p>
+                      )}
+                    </div>
+                  )}
                 </li>
               ))}
             </ul>
