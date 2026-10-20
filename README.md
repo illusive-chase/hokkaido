@@ -148,7 +148,7 @@ npm run build    # 类型检查 + 打包到 dist/
 | `title` / `summary` / `when` | 标题、一段话概括、出行月份 |
 | `in` / `out` | 进出的机场（地点 id） |
 | `prefs[]` | `{ q, a }`：用户回答过的偏好，总览里原样显示 |
-| `rules[]` | `{ title, kind, items[] }`：不针对某一天的应变规则（暴雪、阴天、行李、车票、装备），`items` 是 `{ text, refs? }` |
+| `rules[]` | `{ title, kind, items[] }`：不针对某一天的应变规则（暴雪、阴天、行李、车票、装备），`items` 是 `{ text, refs?, links? }` |
 | `days[]` | 每天一项，见下表 |
 
 `days[]` 的每一项：
@@ -157,13 +157,15 @@ npm run build    # 类型检查 + 打包到 dist/
 |---|---|
 | `day` / `title` / `short` | 第几天（连续）、标题、时间轴上的短名（一般是当晚住的城市） |
 | `stay` / `stayNote` / `stayRefs` | 当晚住的地点、为什么住这里、出处。最后一天不写 `stay` |
-| `move` | 跨城那天的交通：`{ between, mode[], time?, how, refs? }`，字段含义同 `legs` |
-| `slots[]` | `{ slot, time?, short, title, stops[], via?, text, refs?, alts? }`：`slot` 是 `am` / `pm` / `eve`，同一时段可以有几项 |
+| `move` | 跨城那天的交通：`{ between, mode[], time?, how, refs?, links? }`，字段含义同 `legs` |
+| `slots[]` | `{ slot, time?, short, title, stops[], via?, text, refs?, links?, alts? }`：`slot` 是 `am` / `pm` / `eve`，同一时段可以有几项 |
 | `alts[]` | 影响整天的备选，结构同下 |
 
-备选分支（`slots[].alts[]` 和 `days[].alts[]`）：`{ kind, if, short, title, from?, stops[], text, refs? }`。`kind` 是 `snow` 暴雪·停运 / `cloud` 阴天 / `nosnow` 没有雪 / `sunny` 放晴 / `makeup` 补上前几天落下的；`if` 写触发条件；`from` 是分支在地图上从哪个地点接出去，不写就从这个时段之前最后经过的地点接出去。
+备选分支（`slots[].alts[]` 和 `days[].alts[]`）：`{ kind, if, short, title, from?, stops[], text, refs?, links? }`。`kind` 是 `snow` 暴雪·停运 / `cloud` 阴天 / `nosnow` 没有雪 / `sunny` 放晴 / `makeup` 补上前几天落下的；`if` 写触发条件；`from` 是分支在地图上从哪个地点接出去，不写就从这个时段之前最后经过的地点接出去。
 
-`refs` 一律写帖子 ID 的前缀（前 8 位即可），网页上显示成作者名，点开跳到那篇帖子。`npm run data` / `npm run check` 会校验地点、区域、交通方式、分支类型和每个出处都能对上唯一一篇帖子。
+`refs` 一律写帖子 ID 的前缀（前 8 位即可），网页上显示成作者名，点开跳到那篇帖子。帖子里没有、从官网或时刻表查到的信息（班次、营业期、预约规则）写进 `links[]`：`{ name, url, date }`，`date` 是查阅日期（`YYYY-MM-DD`），网页上和帖子出处并排显示、在新窗口打开；`slots[]`、`move`、分支和 `rules[].items[]` 都可以写。`npm run data` / `npm run check` 会校验地点、区域、交通方式、分支类型、每个出处都能对上唯一一篇帖子，以及 `links` 的网址和日期格式。
+
+住处一律提前订好：分支只换当天的景点和走法，不改住处。跨城那天遇到停运，分支写「等恢复、当天赶到原住处」；一整天走不了属于不可抗力，只在 `rules` 里写处理原则。
 
 ### `atlas/sources.json`
 

@@ -91,6 +91,14 @@ export async function validate() {
   const tripIds = (await readdir(join(ATLAS, 'trips'))).filter((f) => f.endsWith('.json')).map((f) => f.slice(0, -5))
   const ref = (at, r) => { if (tripIds.filter((id) => id.startsWith(r)).length !== 1) out.push(`${at}：出处 ${r} 对不上唯一一篇帖子`) }
   const refs = (at, list) => { for (const r of list ?? []) ref(at, r) }
+  const links = (at, list) => {
+    for (const l of list ?? []) {
+      if (!l.name) out.push(`${at}：links 缺 name`)
+      if (!/^https:\/\//.test(l.url ?? '')) out.push(`${at}：links 的 url 应以 https:// 开头 ${l.url}`)
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(l.date ?? '')) out.push(`${at}：links 的 date 应写查阅日期 YYYY-MM-DD ${l.date}`)
+    }
+  }
+  const cite = (at, x) => { refs(at, x.refs); links(at, x.links) }
   const planDir = join(ATLAS, 'plans')
   for (const f of existsSync(planDir) ? (await readdir(planDir)).filter((f) => f.endsWith('.json')) : []) {
     const p = await readJson(join(planDir, f))
@@ -98,13 +106,13 @@ export async function validate() {
     for (const k of ['title', 'summary', 'in', 'out', 'prefs', 'rules', 'days']) if (p[k] == null) out.push(`${at}：缺 ${k}`)
     place(at, p.in)
     place(at, p.out)
-    for (const g of p.rules ?? []) for (const it of g.items ?? []) refs(`${at} rules`, it.refs)
+    for (const g of p.rules ?? []) for (const it of g.items ?? []) cite(`${at} rules`, it)
     const alt = (dt, a) => {
       if (!ALT_KINDS.has(a.kind)) out.push(`${dt}：分支 kind 不合法 ${a.kind}`)
       for (const k of ['if', 'short', 'title', 'text']) if (!a[k]) out.push(`${dt}：分支缺 ${k}`)
       if (a.from) place(dt, a.from)
       for (const s of a.stops ?? []) place(dt, s)
-      refs(dt, a.refs)
+      cite(dt, a)
     }
     for (const [i, d] of (p.days ?? []).entries()) {
       const dt = `${at} D${d.day}`
@@ -114,12 +122,12 @@ export async function validate() {
       if (d.move) {
         for (const a of d.move.between ?? []) if (!areaIds.has(a)) out.push(`${dt} move：未知区域 ${a}`)
         for (const m of d.move.mode ?? []) if (!MODES.has(m)) out.push(`${dt} move：mode 不合法 ${m}`)
-        refs(`${dt} move`, d.move.refs)
+        cite(`${dt} move`, d.move)
       }
       for (const s of d.slots ?? []) {
         if (!SLOTS.has(s.slot)) out.push(`${dt}：slot 不合法 ${s.slot}`)
         for (const id of s.stops ?? []) place(dt, id)
-        refs(dt, s.refs)
+        cite(dt, s)
         for (const a of s.alts ?? []) alt(`${dt} ${s.slot}`, a)
       }
       for (const a of d.alts ?? []) alt(`${dt} 整天`, a)

@@ -2,19 +2,22 @@ import { useMemo } from 'react'
 import { placeById } from '../data'
 import { ALT_META, altKey, refTrip, SLOT_LABEL } from '../plan'
 import { areaName } from '../transit'
-import type { AltKind, SgAlt, SgDay, SgPlan } from '../types'
+import type { AltKind, SgAlt, SgDay, SgLink, SgPlan } from '../types'
 import { Section } from './bits'
 import { ModeTags } from './Transit'
 
-/** 出处：帖子作者，点开看原帖 */
-function Refs({ refs, onTrip }: { refs?: string[]; onTrip: (id: string) => void }) {
+/** 出处：帖子作者，点开看原帖；官网等外部出处在新窗口打开，标出查阅日期 */
+function Refs({ refs, links, onTrip }: { refs?: string[]; links?: SgLink[]; onTrip: (id: string) => void }) {
   const list = (refs ?? []).map(refTrip).filter((t): t is NonNullable<typeof t> => !!t)
-  if (!list.length) return null
+  if (!list.length && !links?.length) return null
   return (
     <span className="refs">
       <small>出处</small>
       {list.map((t) => (
         <button key={t.id} className="ref" onClick={() => onTrip(t.id)} title={t.src.title}>{t.src.author}</button>
+      ))}
+      {links?.map((l) => (
+        <a key={l.url} className="ref" href={l.url} target="_blank" rel="noreferrer" title={`${l.date} 查阅`}>{l.name} ↗</a>
       ))}
     </span>
   )
@@ -55,7 +58,7 @@ function AltCard({ alt, k, on, onPick, onHover, onTrip, onPlace }: {
       <p className="alt-title">{alt.title}</p>
       {alt.stops.length > 0 && <Stops ids={alt.stops} onPlace={onPlace} />}
       <p className="alt-text">{alt.text}</p>
-      <Refs refs={alt.refs} onTrip={onTrip} />
+      <Refs refs={alt.refs} links={alt.links} onTrip={onTrip} />
     </div>
   )
 }
@@ -194,7 +197,7 @@ export function PlanOverview({ plan, day, alt, onDay, onHoverDay, onTrip }: {
                 {g.items.map((it, k) => (
                   <li key={k} className="note note-info">
                     <span className="tone tone-info" aria-hidden>·</span>
-                    <div><p>{it.text}</p><div className="note-meta"><Refs refs={it.refs} onTrip={onTrip} /></div></div>
+                    <div><p>{it.text}</p><div className="note-meta"><Refs refs={it.refs} links={it.links} onTrip={onTrip} /></div></div>
                   </li>
                 ))}
               </ul>
@@ -243,7 +246,7 @@ export function PlanDayDetail({ plan, d, alt, onBack, onDay, onAlt, onHoverAlt, 
             {d.move.time && <span>⏱ {d.move.time}</span>}
           </div>
           <p className="leg-how">{d.move.how}</p>
-          <Refs refs={d.move.refs} onTrip={onTrip} />
+          <Refs refs={d.move.refs} links={d.move.links} onTrip={onTrip} />
         </div>
       )}
 
@@ -258,7 +261,7 @@ export function PlanDayDetail({ plan, d, alt, onBack, onDay, onAlt, onHoverAlt, 
                 <Stops ids={s.stops} onPlace={onPlace} />
                 {s.via && <p className="sg-via">🚃 {s.via}</p>}
                 <p className="sg-text">{s.text}</p>
-                <Refs refs={s.refs} onTrip={onTrip} />
+                <Refs refs={s.refs} links={s.links} onTrip={onTrip} />
                 {s.alts?.map((a, k) => (
                   <AltCard key={k} alt={a} k={altKey(d.day, i, k)} on={k === picked} onPick={onAlt} onHover={onHoverAlt} onTrip={onTrip} onPlace={onPlace} />
                 ))}

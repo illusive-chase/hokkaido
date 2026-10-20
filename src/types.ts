@@ -119,6 +119,9 @@ export type SgSlot = 'am' | 'pm' | 'eve'
 /** 分支在什么情况下启用：暴雪停运 / 阴天 / 没有雪 / 放晴 / 补前几天落下的 */
 export type AltKind = 'snow' | 'cloud' | 'nosnow' | 'sunny' | 'makeup'
 
+/** 帖子以外的出处：官网、时刻表等，写明查阅日期 */
+export interface SgLink { name: string; url: string; date: string }
+
 export interface SgAlt {
   kind: AltKind
   /** 触发条件，例如「有云雾，或者大风缆车停运」 */
@@ -132,6 +135,7 @@ export interface SgAlt {
   text: string
   /** 出处：帖子 ID（前 8 位即可） */
   refs?: string[]
+  links?: SgLink[]
 }
 
 export interface SgSlotItem {
@@ -144,6 +148,7 @@ export interface SgSlotItem {
   via?: string
   text: string
   refs?: string[]
+  links?: SgLink[]
   alts?: SgAlt[]
 }
 
@@ -153,6 +158,7 @@ export interface SgMove {
   time?: string
   how: string
   refs?: string[]
+  links?: SgLink[]
 }
 
 export interface SgDay {
@@ -170,7 +176,7 @@ export interface SgDay {
   alts?: SgAlt[]
 }
 
-export interface SgRule { text: string; refs?: string[] }
+export interface SgRule { text: string; refs?: string[]; links?: SgLink[] }
 
 export interface SgPlan {
   id: string
