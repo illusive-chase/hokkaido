@@ -1,0 +1,12 @@
+{
+  "kind": "review",
+  "summary": "薄野随机 walk in 的百年寿喜烧三光舍：肉质好、午餐套餐便宜，但每人都要点一份 set，带小孩可能被拒。",
+  "bases": ["sapporo"],
+  "photos": [{ "place": "sankosha", "img": [1, 2, 3, 4, 5, 6] }],
+  "notes": [
+    { "place": "sankosha", "tone": "good", "text": "薄野的百年寿喜烧，walk in 吃到；肉质很好，蘸蛋液配米饭；午餐套餐便宜不少。", "from": "post" },
+    { "place": "sankosha", "tone": "info", "text": "作者回复：4 个人点了两份 1980 日元、两份 4290 日元的套餐，每个人都需要点一份 set；最后的猕猴桃冰沙很好吃。", "from": "comment" },
+    { "place": "sankosha", "tone": "warn", "text": "评论：带 2 岁小孩去订晚餐被拒（说没位）；也有人说最好提前预约。", "from": "comment" },
+    { "place": "sankosha", "tone": "meh", "text": "评论：也有人觉得一般，比东京浅草今半的寿喜烧差一点。", "from": "comment" }
+  ]
+}

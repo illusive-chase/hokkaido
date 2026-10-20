@@ -1,0 +1,20 @@
+{
+  "kind": "guide",
+  "summary": "两处独家：小樽祝津展望台（爬坡后人极少）和美瑛观光局的夜游青池小团。",
+  "bases": [],
+  "style": ["小众机位", "夜游"],
+  "notes": [
+    { "place": "shukutsu", "tone": "good", "text": "下午两点多去，整个展望台最多十几个人，待了一个多小时，拍照不用排队；爬坡对少锻炼的人有点辛苦，但一切都值得。", "from": "post" },
+    { "place": "shukutsu", "tone": "warn", "text": "展望台的风无敌大，把裸露的皮肤都保护好。", "from": "post" },
+    { "place": "otaru-st", "tone": "info", "text": "去水族馆的公交在站外右手边蓝色小房子 3 号站台，10 号、11 号都行，认准水族馆方向，15–20 分钟。", "from": "post" },
+    { "place": "otaru-st", "tone": "warn", "text": "小樽的巴士不能用 JR Pass；有天狗山行程和多趟公交的话买缆车 + 巴士一日券很划算。", "from": "post" },
+    { "place": "aoiike", "tone": "good", "text": "美瑛观光局的夜游小团：下午四点半从美瑛站出发，夜游青池、白金瀑布，七点回到美瑛站，赶得上回札幌或旭川的 JR；一人一两百元。暴雪里像进入童话。", "from": "post" },
+    { "place": "biei-st", "tone": "warn", "text": "评论：旭川到美瑛的列车无法在官网预约，要自己看准时刻表；有 JR Pass 直接上车，出站给工作人员看。", "from": "comment" },
+    { "place": "shukutsu", "tone": "info", "text": "小樽站出来有直达水族馆的公交，15–20 分钟；下车朝摩天轮方向爬大坡上去。小樽的巴士不能用 JR Pass，可以在小樽站右边蓝色小屋买天狗山缆车 + 巴士一日 Pass（作者回复：只能现场买，好像只收现金）。", "from": "post" },
+    { "place": "shukutsu", "tone": "warn", "text": "作者回复：祝津展望台、小樽运河、天狗山排在同一天有点赶，天黑快，之间都只能坐公交。", "from": "comment" }
+  ],
+  "tips": [],
+  "legs": [
+    { "between": ["asahikawa", "biei"], "mode": ["jr", "tour"], "how": "美瑛当天往返：旭川坐 JR 到美瑛，在美瑛站旁的观光局报冬季夜游小团（大巴接送，约 16:30 出发、19:00 回美瑛站，含夜游青池、白金瀑布，一人一两百元），回来刚好赶上回札幌或旭川的 JR。", "notes": [{ "tone": "warn", "text": "作者：旭川到美瑛无法在 JR 官网预约，要自己看准时刻表；有 JR Pass 直接上车找位置，出站给工作人员看 Pass。", "from": "comment" }, { "tone": "info", "text": "作者回复：报团回来坐的就是回旭川的最后一班车。", "from": "comment" }] }
+  ]
+}

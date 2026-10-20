@@ -1,0 +1,41 @@
+{
+  "kind": "itinerary",
+  "summary": "10 天 9 晚只换三个大本营：札幌 → 旭川 3 晚 → 函馆 3 晚 → 回札幌；店铺、咖啡馆列表很有品味。",
+  "days": 10,
+  "when": "12 月底—1 月初",
+  "bases": ["sapporo", "asahikawa", "hakodate"],
+  "style": ["慢游", "咖啡馆", "买手店"],
+  "plan": [
+    { "day": 1, "title": "落地札幌，住薄野", "stay": "hotel-stream", "stops": ["cts", "susukino"] },
+    { "day": 2, "title": "札幌逛吃 + 小樽、钱函", "stay": "hotel-stream", "stops": ["sapporo-factory", "otaru", "zenibako"] },
+    { "day": 3, "title": "移动到旭川", "stay": "hotel-jrinn-asahikawa", "stops": ["asahikawa-st"] },
+    { "day": 4, "title": "美瑛小镇、白金青池、白须瀑布、白金神社", "stay": "hotel-jrinn-asahikawa", "stops": ["biei", "aoiike", "shirahige"] },
+    { "day": 5, "title": "旭岳雪山", "stay": "hotel-jrinn-asahikawa", "stops": ["asahidake"] },
+    { "day": 6, "title": "移动到函馆，Bay 区闲逛", "stay": "hotel-lavista-hakodate", "stops": ["hakodate-st", "hachimanzaka", "kanemori", "cafe-dici"] },
+    { "day": 7, "title": "海边六花亭看夕阳", "stay": "hotel-lavista-hakodate", "stops": ["hakodate"] },
+    { "day": 8, "title": "五棱郭公园", "stay": "hotel-lavista-hakodate", "stops": ["goryokaku"] },
+    { "day": 9, "title": "回札幌，北海道神宫求御守", "stay": "sapporo", "stops": ["jingu"] },
+    { "day": 10, "title": "飞行日", "stops": ["cts"] }
+  ],
+  "notes": [
+    { "place": "susukino", "tone": "good", "text": "住薄野：札幌最热闹的地带但不拥挤，逛吃绝对便利。Sapporo Stream Hotel 12 月底参考价 1.3k。", "from": "post" },
+    { "place": "sapporo", "tone": "info", "text": "逛：CA4LA、Kapital、札幌工厂、mont-bell；吃：Komeda、三郎海鲜居酒屋、Mermaid Coffee Roasters。", "from": "post" },
+    { "place": "zenibako", "tone": "good", "text": "去小樽路上一定会路过，值得下车逛一圈，一半雪地一半海面，很治愈。", "from": "post" },
+    { "place": "biei", "tone": "good", "text": "离旭川站约 30 分钟，小镇不大但很治愈，值得留两小时闲逛。", "from": "post" },
+    { "place": "aoiike", "tone": "good", "text": "白金青池可以雪地徒步，约 30 分钟到白须瀑布；白金神社藏在瀑布旁边，一不留神就错过。", "from": "post" },
+    { "place": "asahidake", "tone": "good", "text": "本次隆重推荐：大巴 1 小时往山里去，真有「雪国」的实感。", "from": "post" },
+    { "place": "hotel-jrinn-asahikawa", "tone": "info", "text": "旭川站 JR INN，1 月初参考价 1.2k；市区餐厅不多，回来晚了可以去大型超市。", "from": "post" },
+    { "place": "hachimanzaka", "tone": "meh", "text": "八幡坂和金森红砖仓库个人无感，但 Bay 区值得留一整天闲逛。", "from": "post" },
+    { "place": "goryokaku", "tone": "good", "text": "函馆最喜欢的五角星公园，大树疯长，冬天也别有味道。", "from": "post" },
+    { "place": "asahidake", "tone": "info", "text": "从旭川坐大巴约 1 小时进山。", "from": "post" },
+    { "place": "hotel-lavista-hakodate", "tone": "good", "text": "评论：函馆这家酒店特别好，早餐超好吃。", "from": "comment" }
+  ],
+  "tips": [],
+  "legs": [
+    { "between": ["sapporo", "otaru"], "day": 2, "mode": ["jr"], "how": "札幌附近的小樽当天去；去小樽路上一定会路过钱函，值得下车逛一圈。" },
+    { "between": ["sapporo", "asahikawa"], "day": 3, "mode": ["jr"], "how": "第 3 天移动到旭川，连住 3 晚旭川站 JR INN，以旭川为据点去美瑛和旭岳。" },
+    { "between": ["asahikawa", "biei"], "day": 4, "mode": ["jr", "bus"], "how": "美瑛离旭川站约 30 分钟；白金青池可以雪地徒步约 30 分钟到白须瀑布。", "time": "约 30 分钟" },
+    { "between": ["asahikawa", "hakodate"], "day": 6, "mode": ["jr"], "how": "第 6 天从旭川移动到函馆，住 La Vista 函馆湾。" },
+    { "between": ["hakodate", "sapporo"], "day": 9, "mode": ["jr"], "how": "最后两天回札幌准备飞行。" }
+  ]
+}

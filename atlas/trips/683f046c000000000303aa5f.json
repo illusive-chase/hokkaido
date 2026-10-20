@@ -1,0 +1,44 @@
+{
+  "kind": "itinerary",
+  "summary": "一个人、全程住札幌的 6 天：市区慢逛、美瑛自由行、小樽、手稻滑雪，美食别执着网红店。",
+  "days": 6,
+  "bases": ["sapporo"],
+  "in": "cts",
+  "out": "cts",
+  "style": ["solo", "全程住札幌", "滑雪"],
+  "budget": "东京 + 北海道 12 天约 1.6 万（含购物）；只算北海道约 8000",
+  "plan": [
+    { "day": 1, "title": "东京飞札幌，机场吃汤咖喱", "stay": "sapporo", "stops": ["cts"] },
+    { "day": 2, "title": "北大 → 圆山公园 → 神宫 → 电视塔 → 狸小路 → 薄野", "stay": "sapporo", "stops": ["hokudai", "maruyama", "jingu", "tv-tower", "tanukikoji", "susukino"], "move": "地铁 + 步行" },
+    { "day": 3, "title": "美瑛自由行：白须瀑布、美瑛小镇、徒步去圣诞树", "stay": "sapporo", "stops": ["shirahige", "biei", "shikinoto", "christmas-tree"], "move": "JR + 公交" },
+    { "day": 4, "title": "小樽：钱函 → 天狗山 → 水族馆 → 祝津展望台", "stay": "sapporo", "stops": ["zenibako", "tenguyama", "otaru-aquarium", "shukutsu"], "move": "JR + 打车" },
+    { "day": 5, "title": "手稻滑雪场", "stay": "sapporo", "stops": ["teine"], "move": "JR + 拼车" },
+    { "day": 6, "title": "返程，伴手礼放在机场买", "stops": ["cts"] }
+  ],
+  "notes": [
+    { "place": "hokudai", "tone": "good", "text": "雪景很干净，在北大吃到这次最好吃的冰淇淋，牛乳味很足。", "from": "post" },
+    { "place": "biei", "tone": "good", "text": "强烈建议别报团、别错过美瑛小镇；看好 JR 和公交时刻表，自由行完全没问题。", "from": "post" },
+    { "place": "christmas-tree", "tone": "meh", "text": "网红圣诞树本身没意思，但徒步去很有意思：来回一个多小时，白茫茫雪原，返程遇到绝美夕阳。", "from": "post" },
+    { "place": "zenibako", "tone": "good", "text": "去小樽路上会路过，清晨的海边非常宁静。", "from": "post" },
+    { "place": "tenguyama", "tone": "warn", "text": "被蓝调时刻排队上山的队伍劝退，改为先上天狗山，再打车去水族馆。", "from": "post" },
+    { "place": "shukutsu", "tone": "good", "text": "有种在北欧的错觉。", "from": "post" },
+    { "place": "teine", "tone": "good", "text": "离札幌很近、新手友好，有一条又平又长的雪道，可以对着大海滑。", "from": "post" },
+    { "place": "teine", "tone": "info", "text": "作者回复：雪具租借、衣服自带，雪票加租借共约 800 元；完全不会的建议请教练，官网能预约。", "from": "comment" },
+    { "place": "christmas-tree", "tone": "info", "text": "作者回复：圣诞树那边人超级多，不用担心没人帮忙拍照，也不用排队。", "from": "comment" },
+    { "place": "hokudai", "tone": "info", "text": "作者回复：北海道大学可以直接进去。", "from": "comment" }
+  ],
+  "tips": [
+    { "topic": "住宿", "text": "雪地拖行李很折磨，一个人全程住札幌、日归往返，少很多麻烦也不累；酒店 300 元一晚。", "from": "post" },
+    { "topic": "美食", "text": "别执着小红书网红店，排的全是中国人；排队超过半小时就 pass，自己找的都很好吃。", "from": "post" },
+    { "topic": "交通", "text": "评论：JR Pass 在 Klook 买就行，价格差不多，省去官网注册。", "from": "comment" },
+    { "topic": "住宿", "text": "评论：二月份酒店真的大涨价。", "from": "comment" },
+    { "topic": "交通", "text": "作者回复：买的是「札幌—富良野区域」JR Pass，不是全域的，因为不去函馆；JR Pass 只能坐 JR。", "from": "comment" },
+    { "topic": "住宿", "text": "作者回复：全程住薄野，因为雪天一个人拖行李换酒店很麻烦；提前一个半月订的，后来同一家涨到 900 多一晚。", "from": "comment" },
+    { "topic": "其他", "text": "作者回复：东京 + 北海道 12 天共约 16000 元（含购物），只算北海道、不购物约 8000 元。", "from": "comment" }
+  ],
+  "legs": [
+    { "between": ["chitose", "sapporo"], "day": 1, "mode": ["jr"], "how": "东京飞新千岁，落地较晚，在机场吃完汤咖喱坐 JR 进札幌。", "from": "post" },
+    { "between": ["sapporo", "biei"], "day": 3, "mode": ["jr", "bus"], "how": "富良野美瑛一日游自由行，全程 JR + 公交：白须瀑布 → 美瑛小镇 → 徒步去圣诞树 → 回札幌吃饭。", "notes": [{ "tone": "good", "text": "强烈建议别报团、自由行；只要看好 JR 和公交时刻表就完全没问题。", "from": "post" }, { "tone": "info", "text": "作者回复：这条线比较远，早上早点出发，看好班次表。", "from": "comment" }] },
+    { "between": ["sapporo", "otaru"], "day": 4, "mode": ["jr", "taxi"], "how": "JR 去小樽，路上在钱函下车走走；天狗山下来后打车去小樽水族馆。", "notes": [{ "tone": "info", "text": "作者回复：住札幌 8 点多出门，小樽一天往返完全够。", "from": "comment" }] }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "kind": "question",
+  "summary": "提问帖：札幌 3 晚、登别 1 晚、函馆 2 晚，喜欢《情书》、想看一眼洞爷湖，早上登别出发白天洞爷、晚上到函馆来得及吗？",
+  "bases": ["sapporo", "noboribetsu", "hakodate"],
+  "style": ["提问", "情书"],
+  "notes": [
+    { "place": "otaru", "tone": "good", "text": "评论：情书打卡主要在天狗山，小樽也有很多浪漫的地方，建议单独留一天。", "from": "comment" },
+    { "place": "toya", "tone": "info", "text": "评论：洞爷湖的特色是住温泉酒店看湖景和羊蹄山，旁边的有珠山值得一去；只路过可以找一日团。", "from": "comment" },
+    { "place": "toya", "tone": "warn", "text": "作者：洞爷湖酒店价格是全北海道最离谱的。", "from": "comment" },
+    { "place": "chikyu-misaki", "tone": "good", "text": "评论：住登别的话还有地球岬，天气好强烈推荐，就是公共交通很不方便。", "from": "comment" },
+    { "place": "hakodate-st", "tone": "warn", "text": "评论：只有 JR 没有信号，又慢又晃。", "from": "comment" },
+    { "place": "toya", "tone": "info", "text": "评论：洞爷温泉主打湖景，登别主打硫磺泉功效；预算够建议洞爷。最好的湖之栖、乃之风一放房就被订完，好点的已经 5000 多一晚。", "from": "comment" }
+  ],
+  "tips": [
+    { "topic": "路线", "text": "评论：旭川线和函馆最好不要放在同一趟里。", "from": "comment" },
+    { "topic": "交通", "text": "评论：不去旭川的话，函馆 4 天区域 Pass（约 500 元）很超值；也有人算下来只买单程票更划算——函馆飞走就不必买，要折回新千岁才买 Pass。", "from": "comment" }
+  ],
+  "legs": [
+    { "between": ["noboribetsu", "toya"], "mode": ["jr"], "how": "评论：一早从登别坐 JR 去洞爷湖，单纯湖边逛逛打卡，下午 5 点出发去函馆完全来得及。", "from": "comment" },
+    { "between": ["toya", "hakodate"], "mode": ["jr"], "how": "评论：洞爷湖白天玩完、晚上去函馆 check in。", "from": "comment", "notes": [{ "tone": "warn", "text": "评论：这一带只有 JR 没有信号，又慢又晃。", "from": "comment" }] },
+    { "between": ["sapporo", "asahikawa"], "mode": ["tour"], "how": "评论：旭川路线和函馆最好不要放在一起；想去可以从札幌跟一天美瑛旭川团。", "from": "comment" }
+  ]
+}

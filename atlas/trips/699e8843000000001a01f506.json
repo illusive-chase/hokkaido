@@ -1,0 +1,32 @@
+{
+  "kind": "review",
+  "summary": "七座城市的纯主观星级：旭川五星、美瑛有雪五星、函馆四星；札幌只有两星半。",
+  "bases": [],
+  "style": ["点评", "城市"],
+  "notes": [
+    { "place": "sapporo", "tone": "meh", "text": "非常普通的日本都市，可玩性几乎没有，地面又湿又脏；购物不错，作为交通枢纽不可替代，对多数人只是中转站。", "from": "post" },
+    { "place": "asahikawa", "tone": "good", "text": "游客适中、交通便利、消费不高，雪非常好，城里能看到居民用双板滑雪出行；烟火气足。", "from": "post" },
+    { "place": "hotel-jrinn-asahikawa", "tone": "good", "text": "旭川 JR INN 是这次体验最好的酒店。", "from": "post" },
+    { "place": "biei", "tone": "info", "text": "完全靠雪景赋魅的小村：有雪时是童话小镇，再远也值得；雪化时就是普通农村，没必要去。", "from": "post" },
+    { "place": "otaru", "tone": "meh", "text": "情怀加成太多。特意住了一晚，事后证明没必要，一日游去天狗山和水族馆即可；运河平平无奇，玻璃美但贵；公交一小时一趟，旺季挤不上。", "from": "post" },
+    { "place": "noboribetsu", "tone": "good", "text": "离开后最常想起晚上在温泉小镇的街道漫步、逛每一家纪念品店，是特种兵行程里难得的闲适。", "from": "post" },
+    { "place": "jigokudani", "tone": "meh", "text": "地狱谷很无聊。", "from": "post" },
+    { "place": "toya", "tone": "good", "text": "小镇建设比登别强，有湖和羊蹄山，不泡温泉也不会无处可去；不在意硫磺泉的话建议住洞爷而不是登别。", "from": "post" },
+    { "place": "hakodate", "tone": "good", "text": "暖冬到时市区基本没雪，体验依然不错；元町每一棵树都很美，百万夜景名不虚传，最适合春天来。", "from": "post" },
+    { "place": "shiretoko", "tone": "good", "text": "评论：这趟知床和旭岳大雪山最值；网走破冰船没有冰，冰都在知床那边。", "from": "comment" },
+    { "place": "shukutsu", "tone": "good", "text": "评论：祝津展望台有世界尽头的感觉。", "from": "comment" },
+    { "place": "biei", "tone": "meh", "text": "评论：美瑛好看要有雪 + 天气好，阴天就平平无奇；旭川冬季晴天少，没蓝天雪就不好看；函馆冬天蓝天概率大很多。", "from": "comment" },
+    { "place": "asahidake", "tone": "good", "text": "评论：知床和旭岳大雪山最值；旭岳爬山不需要向导、游客多、设施成熟不会迷路，滑野雪才需要向导。", "from": "comment" },
+    { "place": "otaru", "tone": "warn", "text": "评论：冬天化雪越来越早，2 月底去小樽已经完全没看头。", "from": "comment" }
+  ],
+  "tips": [],
+  "ratings": [
+    { "place": "asahikawa", "score": 5, "label": "★★★★★" },
+    { "place": "biei", "score": 5, "label": "雪好时★★★★★" },
+    { "place": "hakodate", "score": 4, "label": "★★★★" },
+    { "place": "noboribetsu", "score": 3.5, "label": "★★★½" },
+    { "place": "toya", "score": 3.5, "label": "★★★½" },
+    { "place": "otaru", "score": 3, "label": "★★★" },
+    { "place": "sapporo", "score": 2.5, "label": "★★½" }
+  ]
+}

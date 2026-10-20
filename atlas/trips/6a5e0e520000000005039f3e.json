@@ -1,0 +1,46 @@
+{
+  "kind": "itinerary",
+  "summary": "不自驾不报团不走回头路：函馆 3 天 → 一天经洞爷、登别到札幌 → 札幌 4 天日归小樽和旭川美瑛，全程只住两地。",
+  "days": 9,
+  "bases": ["hakodate", "sapporo"],
+  "in": "hakodate-airport",
+  "out": "cts",
+  "style": ["函进札出", "只住两地", "公共交通"],
+  "plan": [
+    { "day": 2, "title": "东京 → 函馆：小丑汉堡 → 函馆山日落和夜景", "stay": "hakodate", "stops": ["hakodate-airport", "lucky-pierrot", "hakodateyama"] },
+    { "day": 3, "title": "函馆一日 citywalk", "stay": "hakodate", "stops": ["asaichi", "omori", "kanemori", "hachimanzaka", "kokaido", "motomachi"] },
+    { "day": 4, "title": "原定大沼公园，JR 停运改去五棱郭", "stay": "hakodate", "stops": ["onuma", "goryokaku"] },
+    { "day": 5, "title": "函馆 → 洞爷 → 登别 → 札幌（唯一带行李的一天）", "stay": "sapporo", "stops": ["toya-st", "toya-lake", "noboribetsu-st", "noboribetsu", "jigokudani", "sapporo-st"] },
+    { "day": 6, "title": "北海道神宫 → 白色恋人公园 → 狸小路", "stay": "sapporo", "stops": ["jingu", "shiroi-koibito", "tanukikoji"] },
+    { "day": 7, "title": "小樽：天狗山 → 水族馆 → 祝津展望台", "stay": "sapporo", "stops": ["otaru-st", "tenguyama", "otaru-aquarium", "shukutsu"] },
+    { "day": 8, "title": "旭川 → 美瑛：白须瀑布 → 四季之塔", "stay": "sapporo", "stops": ["asahikawa-st", "biei-st", "shirahige", "shikinoto"] },
+    { "day": 9, "title": "札幌 → 东京", "stops": ["cts"] }
+  ],
+  "notes": [
+    { "place": "hakodateyama", "tone": "good", "text": "11 点到函馆，下午上山看日落及百万夜景，夯！", "from": "post" },
+    { "place": "onuma", "tone": "warn", "text": "特意留一天怕函馆没雪，结果雪下太大 JR 停运，只能改去五棱郭。", "from": "post" },
+    { "place": "goryokaku", "tone": "good", "text": "暴雪中的五棱郭是人生体验，雪厚到小腿肚。", "from": "post" },
+    { "place": "toya-st", "tone": "good", "text": "函馆→札幌这天行李可以寄存在 JR 站，去景点不用带着。", "from": "post" },
+    { "place": "shirahige", "tone": "info", "text": "要坐公交前往，车程较久，看风景 15 分钟就可以坐公交回；之后在美瑛市区找家咖啡店很惬意。", "from": "post" },
+    { "place": "toya-lake", "tone": "meh", "text": "作者回复：洞爷和登别基本就是小逛一下，行李虽然能寄存在 JR 站，还是有点折腾；去洞爷那天天气不好，湖景一般。", "from": "comment" },
+    { "place": "hakodate", "tone": "info", "text": "作者回复：函馆一定得有雪才好看；如果在函馆多留一天和在旭川多留一天之间选，作者倾向旭川（函馆待久了有点无聊）。", "from": "comment" },
+    { "place": "biei", "tone": "info", "text": "作者回复：美瑛也值得，但和小樽二选一会选小樽。", "from": "comment" }
+  ],
+  "tips": [
+    { "topic": "住宿", "text": "全程只住函馆和札幌，减少雪天搬行李。", "from": "post" },
+    { "topic": "交通", "text": "札幌段买「札幌—富良野区域」JR 周游券，最后一天去新千岁也包含；先在札幌站一次性把四天的车票兑换好。", "from": "post" },
+    { "topic": "交通", "text": "作者回复：全程 JR + 地铁 + 部分公交，带父母也可以，尽量减少带行李出行。东京到函馆坐飞机。", "from": "comment" },
+    { "topic": "交通", "text": "作者回复：暴雪的 plan B——一直住札幌的话影响可控；有函馆—札幌这种长距离 JR 就看运气（遇到过当天函馆去洞爷 JR 停运的人），尽量订可取消的酒店。", "from": "comment" },
+    { "topic": "其他", "text": "作者回复：机酒约 4000 元，吃喝和交通 4000–5000 元，连购物总共不到 1 万；去年 8 月初订的 1 月机酒。", "from": "comment" }
+  ],
+  "legs": [
+    { "between": ["hakodate", "toya"], "day": 5, "mode": ["jr", "bus"], "how": "约 8:50 从函馆站坐 JR 到洞爷站，洞爷站到湖边坐公交。行李寄存在洞爷站的投币柜。", "notes": [{ "tone": "good", "text": "全程唯一带行李的一天，行李寄存在 JR 站（洞爷站、登别站都有投币柜，记得留硬币），去景点不用拖着。", "from": "post" }, { "tone": "warn", "text": "作者回复：会压缩吃饭时间，那天中午只吃了便利店面包；最好早起。", "from": "comment" }] },
+    { "between": ["toya", "noboribetsu"], "day": 5, "mode": ["jr", "bus"], "how": "约 14:00 从洞爷站坐 JR 到登别站，登别站到温泉街和地狱谷坐公交。", "from": "comment" },
+    { "between": ["noboribetsu", "sapporo"], "day": 5, "mode": ["jr"], "how": "约 19:00 从登别站坐 JR 到札幌。", "from": "comment" },
+    { "between": ["sapporo", "otaru"], "day": 7, "mode": ["jr"], "how": "札幌当天往返，用「札幌—富良野区域」周游券。", "time": "约 40 分钟", "notes": [{ "tone": "info", "text": "评论：札幌到小樽 40 分钟左右，到旭川一个半小时左右。", "from": "comment" }] },
+    { "between": ["sapporo", "asahikawa"], "day": 8, "mode": ["jr"], "how": "札幌—旭川—美瑛当天往返，周游券覆盖。", "time": "约 1.5 小时" },
+    { "between": ["asahikawa", "biei"], "day": 8, "mode": ["jr"], "how": "旭川换 JR 到美瑛站；白须瀑布要从美瑛坐公交，车程较久，看 15 分钟就可以坐车回。" },
+    { "between": ["sapporo", "chitose"], "day": 9, "mode": ["jr"], "how": "最后一天去新千岁机场，「札幌—富良野区域」周游券也包含这段。" },
+    { "between": ["hakodate", "onuma"], "day": 4, "mode": ["jr"], "how": "原计划 JR 去大沼公园。", "notes": [{ "tone": "warn", "text": "雪太大 JR 停运，改坐公交去了五棱郭。", "from": "post" }] }
+  ]
+}

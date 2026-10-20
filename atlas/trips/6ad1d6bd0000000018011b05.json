@@ -1,0 +1,13 @@
+{
+  "kind": "review",
+  "summary": "函馆汤之川的平成馆潮音亭：海景私汤、一泊二食；离机场近、离市区十几分钟车程，公共交通不太方便。",
+  "bases": ["hakodate"],
+  "photos": [{ "place": "hotel-heiseikan", "img": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11] }],
+  "notes": [
+    { "place": "hotel-heiseikan", "tone": "good", "text": "海景私汤和露天风吕很推荐；早餐是普通日式自助，但餐厅海景很好。", "from": "post" },
+    { "place": "hotel-heiseikan", "tone": "warn", "text": "一泊二食的晚餐 19:30 结束，看完函馆山夜景下来就赶不上了。", "from": "post" },
+    { "place": "hotel-heiseikan", "tone": "info", "text": "作者回复：订的时候约 2800 元一晚；评论说有日归温泉，1000 日元。", "from": "comment" },
+    { "place": "hotel-heiseikan", "tone": "warn", "text": "评论：门口有公交和机场巴士，但等车时间久，打车约 200 元；去五棱郭也要走一段再坐公交，整体不算方便。作者是自驾。", "from": "comment" },
+    { "place": "hotel-heiseikan", "tone": "info", "text": "附近步行可到的拉面店「一文字」开到 23:00，作者觉得味噌比盐拉面好吃。", "from": "post" }
+  ]
+}

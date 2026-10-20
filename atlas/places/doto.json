@@ -1,0 +1,16 @@
+[
+  { "id": "akan", "name": "阿寒湖·阿伊努村落", "ja": "阿寒湖アイヌコタン", "kind": "sight", "area": "akan", "at": [144.0900, 43.4337], "themes": ["湖", "温泉"] },
+  { "id": "mashu", "name": "摩周湖", "ja": "摩周湖", "kind": "sight", "area": "akan", "at": [144.5170, 43.5789], "themes": ["湖"] },
+  { "id": "iozan", "name": "硫磺山", "ja": "硫黄山（アトサヌプリ）", "kind": "sight", "area": "akan", "at": [144.4386, 43.6104], "themes": ["温泉"] },
+  { "id": "kussharo", "name": "屈斜路湖", "ja": "屈斜路湖", "kind": "sight", "area": "akan", "at": [144.3105, 43.6166], "themes": ["湖", "温泉"] },
+  { "id": "shiretoko", "name": "知床·宇登吕（流冰漫步）", "ja": "ウトロ", "kind": "sight", "area": "shiretoko", "at": [144.9936, 44.0713], "themes": ["流冰", "海"] },
+  { "id": "shiretoko-nc", "name": "知床自然中心", "ja": "知床自然センター", "kind": "sight", "area": "shiretoko", "at": [145.0230, 44.0915], "themes": ["雪景"] },
+  { "id": "abashiri", "name": "网走（破冰船）", "ja": "網走", "kind": "town", "area": "abashiri", "at": [144.2732, 44.0206], "themes": ["流冰"] },
+  { "id": "abashiri-prison", "name": "网走监狱博物馆", "ja": "博物館 網走監獄", "kind": "sight", "area": "abashiri", "at": [144.2296, 43.9968], "themes": [] },
+  { "id": "notoro", "name": "能取岬", "ja": "能取岬", "kind": "sight", "area": "abashiri", "at": [144.2434, 44.1132], "themes": ["海", "流冰"] },
+  { "id": "saroma", "name": "佐吕间湖", "ja": "サロマ湖", "kind": "sight", "area": "monbetsu", "at": [143.8239, 44.1423], "themes": ["湖"] },
+  { "id": "monbetsu", "name": "纹别破冰船 GARINKO 号", "ja": "紋別 ガリンコ号", "kind": "sight", "area": "monbetsu", "at": [143.3750, 44.3284], "themes": ["流冰", "海"] },
+  { "id": "tokkari", "name": "鄂霍次克海豹中心", "ja": "オホーツクとっかりセンター", "kind": "sight", "area": "monbetsu", "at": [143.3732, 44.3339], "themes": ["动物"] },
+  { "id": "kushiro", "name": "钏路", "ja": "釧路", "kind": "town", "area": "kushiro", "at": [144.3820, 42.9850], "themes": [] },
+  { "id": "tokyo", "name": "东京", "kind": "town", "area": "tokyo", "at": [139.7670, 35.6812], "themes": [], "offmap": true }
+]

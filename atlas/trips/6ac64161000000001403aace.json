@@ -1,0 +1,10 @@
+{
+  "kind": "review",
+  "summary": "旭岳滑雪向导推荐东川町的咖啡店 Yoshinori：每天从旭岳回旭川路上都带雪友去。",
+  "bases": ["asahikawa"],
+  "commercial": true,
+  "notes": [
+    { "place": "higashikawa", "tone": "good", "text": "东川町的咖啡店 Yoshinori，作者每天带团从旭岳滑完雪回旭川的路上都会去，有咖啡和冰淇淋，店里有狗。", "from": "post" },
+    { "place": "asahidake", "tone": "warn", "text": "作者回复：零基础不推荐来旭岳滑，可以去神居这类雪场找教练学。", "from": "comment" }
+  ]
+}

@@ -1,1 +1,8 @@
 .miniclaw2
+# 抓取到的小红书原始数据（网友作品，仅个人整理用，不入库）
+data/
+# 由 data/ 生成的本地图片与原文（同样不入库）
+public/local/
+node_modules/
+dist/
+.DS_Store

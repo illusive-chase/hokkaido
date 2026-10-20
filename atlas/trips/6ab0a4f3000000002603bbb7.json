@@ -1,0 +1,33 @@
+{
+  "kind": "itinerary",
+  "summary": "道东 5 日私家团（商业推广）：阿寒湖 → 摩周湖 → 知床流冰漫步 → 网走 → 纹别破冰船 → 旭川美瑛回札幌。",
+  "days": 5,
+  "bases": ["akan", "shiretoko", "monbetsu", "asahikawa"],
+  "style": ["道东", "流冰", "包车", "广告"],
+  "budget": "4 人 10800 元起/人；2 人 14800 元起/人（含交通、门票、住宿、司导）",
+  "commercial": true,
+  "plan": [
+    { "day": 1, "title": "札幌 → 阿寒湖 → 阿伊努村落", "stay": "akan", "stops": ["akan"], "move": "包车" },
+    { "day": 2, "title": "摩周湖 → 硫磺山 → 屈斜路湖 → 知床自然中心 → 宇登吕", "stay": "shiretoko", "stops": ["mashu", "iozan", "kussharo", "shiretoko-nc", "shiretoko"], "move": "包车" },
+    { "day": 3, "title": "知床流冰漫步 → 网走监狱 → 能取岬 → 佐吕间湖", "stay": "saroma", "stops": ["shiretoko", "abashiri-prison", "notoro", "saroma"], "move": "包车" },
+    { "day": 4, "title": "纹别破冰船 → 海豹中心 → 旭川", "stay": "asahikawa", "stops": ["monbetsu", "tokkari", "asahikawa"], "move": "包车" },
+    { "day": 5, "title": "旭山动物园 → 圣诞树、青池、白须瀑布 → 精灵露台 → 札幌", "stops": ["asahiyama-zoo", "christmas-tree", "aoiike", "shirahige", "ningle", "sapporo"], "move": "包车" }
+  ],
+  "notes": [
+    { "place": "shiretoko", "tone": "info", "text": "隆冬鄂霍次克海的流冰南下，有向导带着走上冰海。", "from": "post" },
+    { "place": "monbetsu", "tone": "info", "text": "GARINKO 号破冰船，常能偶遇海豹。", "from": "post" },
+    { "place": "kussharo", "tone": "info", "text": "屈斜路湖可以亲手挖温泉。", "from": "post" },
+    { "place": "monbetsu", "tone": "info", "text": "作者回复：破冰船行程最早 1 月才可订。", "from": "comment" }
+  ],
+  "tips": [
+    { "topic": "其他", "text": "这是旅行社的商业推广帖，价格和描述请自行甄别；路线本身可以作为道东自驾/包车的参考。", "from": "editor" }
+  ],
+  "legs": [
+    { "between": ["sapporo", "akan"], "day": 1, "mode": ["charter"], "how": "札幌接机后包车（阿尔法）直奔阿寒湖，全程点对点接送。" },
+    { "between": ["akan", "shiretoko"], "day": 2, "mode": ["charter"], "how": "阿寒湖 → 摩周湖 → 硫磺山 → 屈斜路湖 → 知床自然中心 → 宇登吕。" },
+    { "between": ["shiretoko", "abashiri"], "day": 3, "mode": ["charter"], "how": "知床流冰漫步后去网走监狱、能取岬。" },
+    { "between": ["abashiri", "monbetsu"], "day": 3, "mode": ["charter"], "how": "网走沿海去佐吕间湖住；第 4 天纹别坐破冰船、看海豹中心。" },
+    { "between": ["monbetsu", "asahikawa"], "day": 4, "mode": ["charter"], "how": "纹别包车翻山到旭川住。" },
+    { "between": ["asahikawa", "biei"], "day": 5, "mode": ["charter"], "how": "旭山动物园 → 圣诞树、青池、白须瀑布 → 富良野精灵露台 → 返程札幌。" }
+  ]
+}

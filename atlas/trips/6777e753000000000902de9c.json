@@ -1,0 +1,36 @@
+{
+  "kind": "daytrip",
+  "summary": "住小樽、睡到自然醒的一天：运河 → 中午上天狗山不排队 → 赶日落去祝津展望台。",
+  "days": 1,
+  "bases": ["otaru"],
+  "in": "cts",
+  "style": ["不排队", "日落"],
+  "plan": [
+    { "day": 1, "title": "新千岁直接坐 JR 到小樽，住商店街附近", "stay": "otaru", "stops": ["cts", "otaru-st"], "label": "前一天" },
+    { "day": 2, "title": "小樽运河、天狗山、祝津展望台一天玩完", "stay": "sapporo", "stops": ["letao", "otaru-canal", "otaru-st", "tenguyama", "otaru-aquarium", "shukutsu", "sapporo"], "move": "巴士 + JR", "label": "当天" }
+  ],
+  "photos": [
+    { "place": "shukutsu", "img": [1] },
+    { "place": "letao", "img": [2] },
+    { "place": "otaru-canal", "img": [3, 4] },
+    { "place": "tenguyama", "img": [5, 6] },
+    { "place": "otaru-aquarium", "img": [7] }
+  ],
+  "notes": [
+    { "place": "letao", "tone": "good", "text": "10 点开门，坐电梯到三楼能从高处看小樽城景。", "from": "post" },
+    { "place": "otaru-canal", "tone": "good", "text": "从大正硝子馆右转走到运河，运河边落雪很美，拍完直接走去 JR 小樽站。", "from": "post" },
+    { "place": "tenguyama", "tone": "good", "text": "中午 12 点去基本不排队，白天也完全值得：白色神社、红色缆车、整个白色的小樽。站前 9 号巴士可刷西瓜卡。", "from": "post" },
+    { "place": "shukutsu", "tone": "good", "text": "下午 2:30 左右坐公交去，刚好赶上夕阳，余晖落在红房子上像世界尽头。", "from": "post" },
+    { "place": "shukutsu", "tone": "warn", "text": "提前用谷歌地图查返程公交，错过一班要在冷风里等很久，出租车也很少。", "from": "post" },
+    { "place": "shukutsu", "tone": "info", "text": "评论：下午去的时候只有五个人，很多人都在看企鹅散步。", "from": "comment" },
+    { "place": "otaru-aquarium", "tone": "info", "text": "企鹅散步每天三场：11:30、12:40、14:40；水族馆下面停运的摩天轮配大雪很出片。", "from": "post" },
+    { "place": "shukutsu", "tone": "info", "text": "作者回复：下午去祝津展望台只有五个人，很多人都在看企鹅散步。", "from": "comment" }
+  ],
+  "tips": [
+    { "topic": "时间", "text": "日本下午四点就天黑，落地当天别安排景点，可以直接坐 JR 去小樽住。", "from": "post" }
+  ],
+  "legs": [
+    { "between": ["chitose", "otaru"], "day": 1, "mode": ["jr"], "how": "下午四点就天黑，落地当天直接从新千岁机场坐 JR 到小樽，住小樽商店街附近，第二天睡个懒觉。" },
+    { "between": ["otaru", "sapporo"], "day": 2, "mode": ["jr"], "how": "小樽玩一天，晚上坐 JR 去札幌住。" }
+  ]
+}

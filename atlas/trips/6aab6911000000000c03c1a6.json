@@ -1,0 +1,36 @@
+{
+  "kind": "itinerary",
+  "summary": "札幌 4 天 3 晚撞上十年一遇的暴雪：小樽计划取消改逛街，换酒店拖箱子走了一小时，第二天的圆山公园美到第一。",
+  "days": 4,
+  "bases": ["sapporo"],
+  "in": "cts",
+  "style": ["暴雪", "城市", "吃货"],
+  "plan": [
+    { "day": 1, "title": "傍晚落地，汤咖喱 Suage+", "stay": "hotel-stream", "stops": ["cts", "suage"] },
+    { "day": 2, "title": "原计划小樽，遇暴雪改札幌逛街；拉面横丁、德寿烧肉", "stay": "hotel-sosei", "stops": ["sapporo-st", "odori", "ramen-yokocho", "tanukikoji"] },
+    { "day": 3, "title": "圆山公园 → 北海道神宫；氷雪之门、炉端烧", "stay": "hotel-sosei", "stops": ["maruyama", "jingu", "hyosetsu"] },
+    { "day": 4, "title": "一早坐 JR 一路向南（登别洞爷、函馆、青森）", "stops": ["sapporo-st"] }
+  ],
+  "notes": [
+    { "place": "hotel-stream", "tone": "good", "text": "住薄野站 Stream Hotel，对面就是啤酒老头招牌，楼下是 EDW 布丁；位置无敌、房间新。", "from": "post" },
+    { "place": "suage", "tone": "good", "text": "下雪天吃到热热的汤咖喱好幸福。", "from": "post" },
+    { "place": "otaru", "tone": "warn", "text": "破纪录暴雪那天 JR 延误又停在半路，担心到了小樽没车回札幌，临时取消。", "from": "post" },
+    { "place": "hotel-sosei", "tone": "warn", "text": "暴雪当天换酒店完全叫不到车，两人各拖一个大箱子走 1.1 公里花了快一小时。酒店建议选临近 JR 或地铁站的。", "from": "post" },
+    { "place": "maruyama", "tone": "good", "text": "整个札幌第一喜欢的地方：暴雪后满地厚厚的白雪，树上挂满雪；公园里有免费大轮胎可以玩雪。", "from": "post" },
+    { "place": "jingu", "tone": "good", "text": "别错过神宫茶屋的现烤红豆福饼和牛奶冰淇淋。", "from": "post" },
+    { "place": "hyosetsu", "tone": "good", "text": "提前预约的三大蟹套餐，烤帝王蟹腿印象最深。", "from": "post" },
+    { "place": "ramen-yokocho", "tone": "info", "text": "元祖横丁里很多家拉面店，盲选了评分不错、不用排队的弟子屈。", "from": "post" },
+    { "place": "hyosetsu", "tone": "info", "text": "作者回复：高级三大蟹套餐（约 600 克）含税每人 19910 日元。", "from": "comment" },
+    { "place": "sapporo", "tone": "info", "text": "作者回复：一月中下旬暴雪概率通常高一些；札幌 2 月中地上积雪可能不多，下雪看运气；12 月去雪山应该能看到雪。", "from": "comment" }
+  ],
+  "tips": [
+    { "topic": "装备", "text": "冰爪非常必要。", "from": "post" },
+    { "topic": "住宿", "text": "暴雪当天换酒店完全叫不到出租车，两人各拖一个大箱子走了 1.1 公里、快一小时；酒店选临近 JR 站或地铁站的。", "from": "post" },
+    { "topic": "机票", "text": "评论：雪大时航班可能延误或取消；全程 JAL 或 ANA 会免费改签。", "from": "comment" }
+  ],
+  "legs": [
+    { "between": ["chitose", "sapporo"], "day": 1, "mode": ["jr"], "how": "傍晚落地新千岁，晚上 9 点多到薄野的酒店。" },
+    { "between": ["sapporo", "otaru"], "day": 2, "mode": ["jr"], "how": "原计划 JR 去小樽一日游；平时札幌坐 JR 到小樽 50 分钟左右。", "time": "约 50 分钟", "notes": [{ "tone": "warn", "text": "遇上破纪录暴雪，JR 延误又停在半路，担心到了小樽没车回札幌，临时改成札幌市区逛街。", "from": "post" }] },
+    { "between": ["sapporo", "noboribetsu"], "day": 4, "mode": ["jr"], "how": "第 4 天一早坐 JR 离开札幌一路向南：登别、洞爷湖 3 天 2 晚，函馆 3 天 2 晚，再去青森。" }
+  ]
+}

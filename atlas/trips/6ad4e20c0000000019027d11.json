@@ -1,0 +1,21 @@
+{
+  "kind": "daytrip",
+  "summary": "小樽一日线：JR 到小樽站 → 三角市场 → 龙宫神社 → 从人少的一头沿运河走 → 商业街逛到南小樽站坐 JR 回札幌，不走回头路。",
+  "days": 1,
+  "when": "10 月",
+  "bases": ["sapporo"],
+  "style": ["一日游", "购物"],
+  "plan": [
+    { "day": 1, "title": "小樽站 → 三角市场 → 龙宫神社 → 小樽运河 → 堺町通商业街 → 南小樽站", "stay": "sapporo", "stops": ["otaru-st", "sankaku", "ryugu-jinja", "otaru-canal", "sakaimachi", "minami-otaru"], "move": "JR" }
+  ],
+  "notes": [
+    { "place": "ryugu-jinja", "tone": "good", "text": "小樽站顺路走 5 分钟；周年纪念有限定御守（透明款 10/25 之后才有，大概持续到年底）；从神社阶梯能拍到鸟居和海。", "from": "post" },
+    { "place": "otaru-canal", "tone": "good", "text": "从龙宫神社直走不到 20 分钟到运河另一头，没什么人；顺着运河走约 10 分钟到最经典的拍照位置，商业街就连在旁边。", "from": "post" },
+    { "place": "sakaimachi", "tone": "good", "text": "玻璃、木艺、陶艺、皮革、八音盒店都很好逛，还有 Chiikawa、米菲、史努比的小樽限定；作者最喜欢「大正硝子 ほっこり家」的迷你玻璃工艺品。", "from": "post" },
+    { "place": "sakaimachi", "tone": "warn", "text": "作者评论：Chiikawa 蛋糕店的限定要先去受付领菜单勾选再排队，直接排不行；下午 1:30 排了近一小时，手提袋和钥匙扣已卖完，要早去。进本店不用排队。", "from": "comment" },
+    { "place": "sakaimachi", "tone": "info", "text": "作者回复：11:30 到小樽、17:00 结束，商业街从 13:30 逛到 17:00；逛得细的话留四五个小时。很多店能用微信，但也备点现金。", "from": "comment" }
+  ],
+  "legs": [
+    { "between": ["sapporo", "otaru"], "day": 1, "mode": ["jr"], "how": "去程札幌站坐 JR 约半小时到小樽站；回程从商业街另一头的南小樽站坐 JR 回札幌，不用折回小樽站。", "time": "约 30 分钟" }
+  ]
+}

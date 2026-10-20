@@ -1,0 +1,12 @@
+{
+  "manifest_version": 3,
+  "name": "雪国手帖 · 评论采集",
+  "version": "0.1.0",
+  "description": "浏览小红书网页版时，把页面上已经加载的笔记和评论存进仓库的 data/captures/。只读页面内存，不发请求，不模拟点击或滚动。",
+  "minimum_chrome_version": "116",
+  "permissions": ["sidePanel", "scripting"],
+  "host_permissions": ["https://www.xiaohongshu.com/*"],
+  "background": { "service_worker": "background.js" },
+  "side_panel": { "default_path": "sidepanel.html" },
+  "action": { "default_title": "打开评论采集面板" }
+}

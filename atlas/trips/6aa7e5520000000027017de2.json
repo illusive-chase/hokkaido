@@ -1,0 +1,28 @@
+{
+  "kind": "itinerary",
+  "summary": "札幌慢逛两天：住札幌站西口，学会走地下通道；神宫的雪林和一碗 SOUP CURRY KING。",
+  "days": 2,
+  "when": "2025 年 2 月",
+  "bases": ["sapporo"],
+  "style": ["城市慢逛", "汤咖喱"],
+  "plan": [
+    { "day": 1, "title": "札幌站 → 红砖厅 → 大通公园、电视塔 → 狸小路 → 薄野", "stay": "hotel-keihan", "stops": ["sapporo-st", "akarenga", "odori", "tv-tower", "tanukikoji", "susukino"] },
+    { "day": 2, "title": "圆山公园 → 北海道神宫 → 白色恋人公园", "stay": "hotel-keihan", "stops": ["maruyama", "jingu", "shiroi-koibito", "soup-curry-king"] }
+  ],
+  "notes": [
+    { "place": "hotel-keihan", "tone": "good", "text": "离 JR 札幌站西口很近，后面去小樽、旭川方便；冬天离车站近比酒店豪华更重要。", "from": "post" },
+    { "place": "sapporo-st", "tone": "good", "text": "地下通道可以连着走：札幌站 → Chi-Ka-Ho → 大通 → Pole Town → 薄野，冷和路滑时舒服很多。", "from": "post" },
+    { "place": "akarenga", "tone": "info", "text": "去的时候在修缮，2025 年 7 月已重新开放，现在可以参观室内。", "from": "post" },
+    { "place": "tv-tower", "tone": "info", "text": "登不登看兴趣，站在大通公园看雪里的红色塔身就很好看。", "from": "post" },
+    { "place": "tanukikoji", "tone": "good", "text": "下雪时走进有顶棚的狸小路，会立刻觉得这个顶棚真好。", "from": "post" },
+    { "place": "jingu", "tone": "good", "text": "从圆山公园走进去那段雪林很安静；留 1.5–2 小时，别拍完本殿就走。", "from": "post" },
+    { "place": "shiroi-koibito", "tone": "good", "text": "欧式建筑盖上雪比预想中好拍；想看制作展示进收费区，只逛庭院、买伴手礼有免费区域。", "from": "post" },
+    { "place": "soup-curry-king", "tone": "good", "text": "在日本吃过最好吃的一餐之一：汤是稀的，味道很浓，咖喱香里带鲜味。", "from": "post" },
+    { "place": "sapporo-st", "tone": "good", "text": "札幌站到薄野可以一路走地下：札幌站 → Chi-Ka-Ho → 大通 → Pole Town → 薄野，冷和路滑的时候舒服很多。", "from": "post" },
+    { "place": "nakajima", "tone": "meh", "text": "作者回复：中岛公园顺路逛逛没问题，专门跑一趟觉得不值。", "from": "comment" }
+  ],
+  "tips": [
+    { "topic": "住宿", "text": "住札幌站附近（京阪酒店离 JR 西口很近），之后去小樽、旭川都方便；冬天离车站近比酒店豪华更重要。", "from": "post" },
+    { "topic": "季节", "text": "作者回复：不到 12 月的雪容易化，看雪 12 月以后；2 月中下旬积雪肯定有，旭川美瑛的雪比洞爷函馆更稳定。", "from": "comment" }
+  ]
+}

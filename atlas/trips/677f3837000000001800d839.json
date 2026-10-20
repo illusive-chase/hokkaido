@@ -1,0 +1,52 @@
+{
+  "kind": "itinerary",
+  "summary": "大 P 人全程住札幌、每天坐车 5–9 小时后的复盘：如果重来，直奔旭川住 3 天，再函馆 2 天，最后回札幌。",
+  "days": 7,
+  "bases": ["asahikawa", "hakodate", "sapporo"],
+  "style": ["沉浸赏雪", "复盘", "换酒店"],
+  "plan": [
+    { "day": 1, "title": "旭岳雪山（如果蓝天白云）", "stay": "asahikawa", "stops": ["asahikawa-st", "asahidake"] },
+    { "day": 2, "title": "旭川动物园、拉面村、富良野精灵露台", "stay": "asahikawa", "stops": ["asahiyama-zoo", "ramen-mura", "ningle"] },
+    { "day": 3, "title": "美瑛：四季彩、白须瀑布、青池、徒步去圣诞树", "stay": "asahikawa", "stops": ["biei", "shikisai", "shirahige", "aoiike", "bibaushi", "christmas-tree"] },
+    { "day": 4, "title": "逛函馆", "stay": "hakodate", "stops": ["hakodate-st", "hakodate"] },
+    { "day": 5, "title": "登别地狱谷、熊牧场，顺路洞爷湖", "stay": "noboribetsu", "stops": ["jigokudani", "bear-park", "toya-lake"] },
+    { "day": 6, "title": "小樽：钱函下车看海，直奔天狗山，再逛运河、八音盒", "stay": "sapporo", "stops": ["zenibako", "tenguyama", "otaru-canal", "musicbox", "sapporo"] },
+    { "day": 7, "title": "札幌逛吃买", "stay": "sapporo", "stops": ["sapporo"] }
+  ],
+  "notes": [
+    { "place": "sapporo", "tone": "warn", "text": "全程住札幌往返其他城市，每天在车上 5–9 小时，逛不到街、看不到几个景点。", "from": "post" },
+    { "place": "asahikawa", "tone": "good", "text": "最干净、纯净、酣畅淋漓的大雪都在旭川，建议直接住 3 天。", "from": "post" },
+    { "place": "asahidake", "tone": "good", "text": "蓝天白云就直接去：北海道海拔最高，有冒热气的火山口，人很少，世界只剩呼吸声和脚步声。", "from": "post" },
+    { "place": "asahidake", "tone": "info", "text": "评论：旭川站左边 9 号站台上车，每天只有三班；不滑雪的可以坐缆车上去徒步，半小时到第一个喷气口。", "from": "comment" },
+    { "place": "biei", "tone": "good", "text": "最治愈的小镇，出站那一刻像进了童话。小红书可以预约森林漫步，当地人带你进林子徒步、摇雪。", "from": "post" },
+    { "place": "christmas-tree", "tone": "good", "text": "从美马牛站徒步半小时去圣诞树。", "from": "post" },
+    { "place": "tenguyama", "tone": "warn", "text": "到小樽直奔天狗山，早上去早点下来，不然排队很久又冷。", "from": "post" },
+    { "place": "zenibako", "tone": "good", "text": "去小樽途中在钱函站下，可以看到大海 + 雪景，别玩太久。", "from": "post" },
+    { "place": "sapporo", "tone": "meh", "text": "札幌雪不好看，人多雪化得快，也脏；但很好吃、很好买：烧鸟、寿司、烤羊肉。", "from": "post" },
+    { "place": "biei", "tone": "warn", "text": "评论（作者回复）：美瑛富良野一日游如果天气不好，只能去一个景点就得返程，超级赶。札幌—旭川—美瑛建议坐 JR，路上的风景美到沉醉。", "from": "comment" },
+    { "place": "asahidake", "tone": "info", "text": "作者回复：从旭川坐 JR 到旭岳要 3 小时以上（含换车）；3 月中雪估计不多了。", "from": "comment" },
+    { "place": "asahikawa", "tone": "info", "text": "作者回复：住旭川去动物园、白须瀑布都有巴士；带老人孩子住市区或 JR 站附近就行。", "from": "comment" },
+    { "place": "otaru", "tone": "good", "text": "作者回复：小樽都比札幌更值得玩两天；札幌留一天购物就够。", "from": "comment" },
+    { "place": "christmas-tree", "tone": "good", "text": "作者回复：从美马牛站徒步半小时去圣诞树的那条路绝美。", "from": "comment" }
+  ],
+  "tips": [
+    { "topic": "时间", "text": "下午 4 点开始天黑，如果每天不能 8 点出门，真的玩不到什么。", "from": "post" },
+    { "topic": "交通", "text": "JR Pass 很容易回本。", "from": "post" },
+    { "topic": "支付", "text": "评论：除了个别公交需要现金，全都可以刷西瓜卡（iPhone 可直接绑定）；备两三万日元现金一周够用。", "from": "comment" },
+    { "topic": "交通", "text": "评论：旭川到函馆坐 JR 好远，大约六个小时。", "from": "comment" },
+    { "topic": "交通", "text": "作者回复：JR Pass 要提前买；不买就直接刷西瓜卡。作者买的是 7 日 Pass。", "from": "comment" },
+    { "topic": "交通", "text": "作者回复：谷歌地图能查到几号站台、几点出发、一天几班；不遇恶劣天气都很准时。交通都有中文播报。", "from": "comment" },
+    { "topic": "交通", "text": "评论：日本可以邮寄行李；酒店订在 JR 站 300 米以内，只背双肩包就不怕换酒店。", "from": "comment" }
+  ],
+  "legs": [
+    { "between": ["chitose", "asahikawa"], "day": 1, "mode": ["jr"], "how": "落地新千岁直奔旭川住 3 天，不先进札幌。", "time": "约 2.5 小时", "from": "comment", "notes": [{ "tone": "info", "text": "作者回复：新千岁直达旭川约两个半小时。", "from": "comment" }] },
+    { "between": ["sapporo", "asahikawa"], "mode": ["jr"], "how": "札幌坐特急到旭川约 1 小时 25 分钟。", "time": "1h25min", "from": "comment", "notes": [{ "tone": "warn", "text": "作者：除了小樽，札幌去其他城市单程都在一个半小时以上；住札幌往返每天在车上 5–9 小时，逛不到街、看不到几个景点。", "from": "post" }, { "tone": "info", "text": "评论反方：换酒店才折腾，大雪天拖行李、10 点退房 15 点才能入住；札幌去其他地方路上风景也美，看个人。", "from": "comment" }] },
+    { "between": ["sapporo", "biei"], "mode": ["jr"], "how": "札幌—旭川—美瑛—富良野建议坐 JR，路上风景美到沉醉；札幌到美瑛 2 小时以上。", "time": "2h+", "from": "comment", "notes": [{ "tone": "warn", "text": "作者回复：美瑛富良野一日游如果天气不好，只能去一个景点就得返程，超级赶。", "from": "comment" }] },
+    { "between": ["asahikawa", "hakodate"], "day": 4, "mode": ["jr"], "how": "旭川坐 JR 去函馆，路上要一整天。", "time": "约 6 小时", "from": "comment", "notes": [{ "tone": "warn", "text": "作者回复：好远，大约六个小时，这一天基本只能用来移动。", "from": "comment" }] },
+    { "between": ["sapporo", "hakodate"], "mode": ["jr"], "how": "札幌去函馆要坐 JR，4 小时以上。", "time": "4h+", "from": "comment" },
+    { "between": ["hakodate", "noboribetsu"], "day": 5, "mode": ["jr"], "how": "函馆住两天，第二天去登别地狱谷、熊牧场，顺路洞爷湖，在登别泡温泉。", "notes": [{ "tone": "info", "text": "作者回复：住函馆去洞爷湖比住札幌去方便。", "from": "comment" }] },
+    { "between": ["asahikawa", "noboribetsu"], "mode": ["jr"], "how": "作者回复：旭川到登别单程 3–5 小时，有特急和普通车。", "time": "3–5 小时", "from": "comment" },
+    { "between": ["sapporo", "otaru"], "day": 6, "mode": ["jr"], "how": "住札幌去小樽玩一天，途中在钱函站下车看海和雪，别玩太久；到小樽直奔天狗山。", "notes": [{ "tone": "warn", "text": "天狗山早上去、早点下来，不然排队很久又冷。", "from": "post" }] },
+    { "between": ["sapporo", "abashiri"], "mode": ["bus"], "how": "精力旺盛可以连夜坐大巴去网走、知床，在车上睡一晚，醒来直接玩。" }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "kind": "question",
+  "summary": "提问帖：札幌、小樽、函馆、登别……到底全程住札幌，还是跟着地点换住宿？评论区给了好几套答案。",
+  "bases": [],
+  "style": ["住哪里", "提问"],
+  "notes": [
+    { "place": "sapporo", "tone": "info", "text": "评论：住札幌、报一日团（登别洞爷线、旭川富良野线、小樽线），解决交通还有导游解说，不累心。", "from": "comment" },
+    { "place": "sapporo", "tone": "info", "text": "评论：看地图就明白了——札幌能覆盖小樽，非常勉强地覆盖美瑛富良野（走马观花），函馆、洞爷来回时间不够折腾。", "from": "comment" },
+    { "place": "toya", "tone": "good", "text": "评论：洞爷湖建议住一晚，登别顺便逛；函馆住两晚，札幌住两晚。", "from": "comment" },
+    { "place": "toya", "tone": "info", "text": "评论：洞爷湖、登别有些酒店有札幌接送班车，1200 一晚左右很划算。", "from": "comment" }
+  ],
+  "tips": [
+    { "topic": "住宿", "text": "评论：不喜欢换酒店，尤其下雪天很麻烦，全程住札幌，报一日团或坐 JR 很方便。", "from": "comment" },
+    { "topic": "购物", "text": "评论：北海道小地方品牌可能不全，市区有机会就买伴手礼、试吃。", "from": "comment" },
+    { "topic": "住宿", "text": "评论：每天下午入住，第二天早上退房寄存行李，玩到下午坐 JR 去下一个地方；函馆应该多住一天，札幌三天够（小樽当天往返）。", "from": "comment" }
+  ],
+  "legs": [
+    { "between": ["sapporo", "noboribetsu"], "mode": ["tour", "jr"], "how": "高赞评论（474 赞）：住札幌报一日团，有登别洞爷湖路线、旭川富良野路线、小樽白色恋人路线，解决交通还有导游讲解；评论另说札幌去登别 JR 一个半小时，部分登别酒店可接送。", "time": "约 1.5 小时", "from": "comment" },
+    { "between": ["noboribetsu", "hakodate"], "mode": ["jr"], "how": "评论：登别去函馆约一个半小时；不住登别的话札幌直接去函馆三个小时左右，车上风景好看。", "from": "comment" },
+    { "between": ["sapporo", "hakodate"], "mode": ["jr"], "how": "评论：函馆离札幌 JR 3.5 小时左右，肯定要住；札幌到函馆车票 500 多元，最好别走回头路，直接玩到函馆。", "time": "3–4 小时", "cost": "500 多元", "from": "comment", "notes": [{ "tone": "info", "text": "评论：JR Pass 札幌往返函馆一趟就回本。", "from": "comment" }] },
+    { "between": ["sapporo", "toya"], "mode": ["jr"], "how": "评论：洞爷湖离札幌 JR 一个半小时左右（也有人说两个多小时）。", "from": "comment", "notes": [{ "tone": "warn", "text": "评论：JR 没那么频繁、小地方公交间隔长，不建议去远的地方再回札幌。", "from": "comment" }] },
+    { "between": ["chitose", "noboribetsu"], "mode": ["bus"], "how": "评论：新千岁直接坐道南巴士到登别，住一晚；第二天坐酒店大巴到札幌电视塔。", "from": "comment" },
+    { "between": ["sapporo", "otaru"], "mode": ["jr"], "how": "评论：小樽札幌一天来回就可以，不用换住宿。", "from": "comment", "notes": [{ "tone": "warn", "text": "评论反方：雪天去小樽最好住一晚，可能遇到交通停运。", "from": "comment" }] },
+    { "between": ["hakodate", "toya"], "mode": ["jr"], "how": "评论：东京寄大行李到札幌，东京飞函馆看夜景住一晚，JR 去洞爷住，再 JR 去札幌；之后住札幌一日往返小樽、美瑛富良野。", "from": "comment" }
+  ]
+}

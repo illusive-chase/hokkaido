@@ -1,0 +1,36 @@
+{
+  "kind": "itinerary",
+  "summary": "四天特种兵自然线：千岁观鸟咖啡、美呗—旭川—白金瀑布、小樽天狗山 + 钱函、北大与中岛公园。",
+  "days": 4,
+  "bases": ["sapporo"],
+  "in": "cts",
+  "style": ["自然", "胶片", "特种兵"],
+  "plan": [
+    { "day": 1, "title": "千岁站打车去观鸟咖啡馆", "stay": "nakajima", "stops": ["cts", "bird-cafe"] },
+    { "day": 2, "title": "美呗 → 旭川 → 白金瀑布（必须坐 8:00 JR）", "stay": "nakajima", "stops": ["bibai", "asahikawa-st", "shirahige", "shirogane"] },
+    { "day": 3, "title": "小樽天狗山 + 钱函（相对轻松）", "stay": "nakajima", "stops": ["otaru-st", "tenguyama", "zenibako"] },
+    { "day": 4, "title": "北海道大学 + 中岛公园（购物日）", "stay": "nakajima", "stops": ["hokudai", "nakajima", "tenmondai"] }
+  ],
+  "notes": [
+    { "place": "bird-cafe", "tone": "good", "text": "非常推荐，基本都是本地人，能看到吉祥物北长尾山雀，吃的也很好。", "from": "post" },
+    { "place": "shirahige", "tone": "warn", "text": "都是 1 小时一班车，需要 100 分精神；不建议提前下车徒步，要走两小时。", "from": "post" },
+    { "place": "shirogane", "tone": "good", "text": "白金温泉汤元酒店几十块钱就能泡硫磺泉。", "from": "post" },
+    { "place": "asahikawa-st", "tone": "good", "text": "晚饭旭川站旁的 Yakiniku Wajima，价格只有京都的 2/3。", "from": "post" },
+    { "place": "zenibako", "tone": "info", "text": "钱函的海边实际要定位钱函海水浴场，下车走 10 分钟。", "from": "post" },
+    { "place": "otaru-st", "tone": "good", "text": "出站右转 200 米买天狗山套票（缆车 + 一日市内公交）。之前看了很多差评，实际远超预期。", "from": "post" },
+    { "place": "hokudai", "tone": "good", "text": "北大门口的 Cafe de Gohan 是雪景咖啡馆，自制苹果汁很夯。", "from": "post" },
+    { "place": "tenmondai", "tone": "good", "text": "中岛公园夜景推荐，定位札幌天文台，那边是最大的坡，有免费的滑板可以出溜滑。", "from": "post" }
+  ],
+  "tips": [
+    { "topic": "交通", "text": "必入「札幌—富良野地区」JR Pass 4 日卡。", "from": "post" },
+    { "topic": "住宿", "text": "购物选薄野，安静选中岛公园；考虑大雪，选离地铁站近的。", "from": "post" },
+    { "topic": "美食", "text": "别信「北海道限定」，走不出北海道的都不好吃（吃了 10+ 款后的感慨）。", "from": "post" },
+    { "topic": "交通", "text": "千岁站打车去观鸟咖啡馆。", "from": "post" }
+  ],
+  "legs": [
+    { "between": ["sapporo", "bibai"], "day": 2, "mode": ["jr"], "how": "必须坐 8:00 的 JR：札幌 → 美呗约 35 分钟。", "time": "约 35 分钟", "notes": [{ "tone": "warn", "text": "这一天都是一小时一班车，要打起 100 分精神。", "from": "post" }] },
+    { "between": ["bibai", "asahikawa"], "day": 2, "mode": ["jr"], "how": "美呗 → 旭川约 1 小时。", "time": "约 1 小时" },
+    { "between": ["asahikawa", "biei"], "day": 2, "mode": ["bus"], "how": "旭川 → 白金瀑布约 1.5 小时；瀑布旁的白金温泉汤元酒店几十块就能泡硫磺泉。", "time": "约 1.5 小时", "notes": [{ "tone": "warn", "text": "不建议提前下车徒步，要走两个小时。", "from": "post" }] },
+    { "between": ["sapporo", "otaru"], "day": 3, "mode": ["jr", "bus"], "how": "去钱函海边要定位钱函海水浴场（下车走 10 分钟）；小樽站出门右转 200 米买天狗山套票，含缆车和小樽市内公交一日券。" }
+  ]
+}

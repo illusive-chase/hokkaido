@@ -1,0 +1,29 @@
+{
+  "name": "hokkaido",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "fetch": "node scripts/xhs-fetch.mjs",
+    "data": "node scripts/build-site-data.mjs",
+    "captures": "node scripts/merge-captures.mjs",
+    "read": "node scripts/xhs-read.mjs",
+    "check": "node scripts/check-atlas.mjs",
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "maplibre-gl": "5.24.0",
+    "react": "19.3.0",
+    "react-dom": "19.3.0"
+  },
+  "devDependencies": {
+    "@types/geojson": "^7946.0.16",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@vitejs/plugin-react": "6.1.1",
+    "typescript": "5.9.3",
+    "vite": "8.3.0"
+  }
+}

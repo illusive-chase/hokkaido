@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>评论采集</title>
+  <link rel="stylesheet" href="sidepanel.css">
+</head>
+<body>
+  <header>
+    <h1>评论采集</h1>
+    <p class="muted">只读页面上已经加载的内容，不发请求、不点击、不滚动。评论要你自己翻、自己点「展开」。</p>
+  </header>
+
+  <section class="box" id="dir-box">
+    <div class="row">
+      <span class="label">数据目录</span>
+      <code id="dir-name">未选择</code>
+      <button id="pick-dir" class="small">选择…</button>
+    </div>
+    <p id="dir-hint" class="muted small">选中仓库里的 <code>hokkaido/data</code>（选仓库根目录也行，会自动进入 data）。</p>
+  </section>
+
+  <section class="box">
+    <div class="row">
+      <span class="label">当前页面</span>
+      <span id="page" class="muted">—</span>
+      <button id="read" class="small">读取</button>
+    </div>
+    <p id="page-hint" class="small muted">打开 <code>www.xiaohongshu.com/explore/&lt;笔记ID&gt;</code>（需要登录），翻完评论后点「读取」看完整度，再保存。</p>
+  </section>
+
+  <div id="notes"></div>
+
+  <footer>
+    <button id="save" class="primary" disabled>保存</button>
+    <div id="log" class="small"></div>
+  </footer>
+
+  <script src="snapshot.js"></script>
+  <script type="module" src="sidepanel.js"></script>
+</body>
+</html>

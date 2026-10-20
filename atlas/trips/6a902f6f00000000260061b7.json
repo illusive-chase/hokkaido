@@ -1,0 +1,32 @@
+{
+  "kind": "guide",
+  "summary": "solo 经验：不去函馆、全程住札幌，小樽洞爷可日归，旭川美瑛最好报一日游；穿衣、现金、JR Pass 细节。",
+  "bases": ["sapporo"],
+  "style": ["solo", "全程住札幌"],
+  "notes": [
+    { "place": "sapporo", "tone": "good", "text": "不去函馆的话全程住札幌就行。市区留一天：北海道大学、神宫、买东西。", "from": "post" },
+    { "place": "zenibako", "tone": "good", "text": "钱函 + 小樽可以当天来回。", "from": "post" },
+    { "place": "toya", "tone": "info", "text": "洞爷湖可以当天来回；注意 JR 接驳道南巴士的时间。", "from": "post" },
+    { "place": "asahiyama-zoo", "tone": "info", "text": "旭川 + 圣诞树 + 瀑布 + 企鹅 + 精灵露台，想全部玩到最好报一日游。", "from": "post" },
+    { "place": "hotel-forza", "tone": "good", "text": "札幌站前 Forza 交通便利，大堂每天免费供应热可可，可以寄存行李。", "from": "post" },
+    { "place": "hotel-toya-kanko", "tone": "good", "text": "洞爷湖观光酒店日式湖景房能看到羊蹄山，没有网上说的异味，下雪时泡室外浴池很爽。", "from": "post" },
+    { "place": "hotel-park", "tone": "good", "text": "札幌公园饭店是 First Love 拍摄地，有情怀的推荐，早餐好吃。", "from": "post" },
+    { "place": "biei", "tone": "good", "text": "作者回复：这几个地方最美的是美瑛，小镇不大、到处是彩色小屋，街上没人很安静。", "from": "comment" },
+    { "place": "susukino", "tone": "warn", "text": "作者回复：只有札幌薄野几小段路比较滑，雪被踩成了溜冰场，边上还是能找到下脚的地方。", "from": "comment" }
+  ],
+  "tips": [
+    { "topic": "装备", "text": "不需要保暖内衣，车站商场餐厅暖气足；耳罩帽子围巾手套必备，皮肤别露在外面就不冷。", "from": "post" },
+    { "topic": "支付", "text": "一定带现金，不知道哪家只收现金；带张 Visa 和零钱包。", "from": "post" },
+    { "topic": "交通", "text": "JR Pass 去旭川、洞爷算下来更划算，要提前去官网指定车次和座席；去小樽和机场不用指定，空位很多。", "from": "post" },
+    { "topic": "机票", "text": "提前半年买全日空，香港东京转机 5k；之后只会涨价。", "from": "post" },
+    { "topic": "天气", "text": "北海道很受天气影响，暴雪或雪融看不到奶盖雪时美景会打折，调整好心态。", "from": "post" },
+    { "topic": "交通", "text": "作者回复：西瓜卡在苹果钱包里添加 Suica 充值；一共充了 400 多元，前一天用谷歌地图查第二天车费再充，用不完在便利店刷掉。", "from": "comment" },
+    { "topic": "交通", "text": "作者回复：人行道基本扫干净或踩平了，拉行李箱不难，别住得离地铁站太远。", "from": "comment" }
+  ],
+  "legs": [
+    { "between": ["sapporo", "otaru"], "mode": ["jr"], "how": "钱函 + 小樽当天来回；去小樽不用提前指定车次和座席，座位很多，时间更灵活。" },
+    { "between": ["sapporo", "toya"], "mode": ["jr", "bus"], "how": "洞爷湖可以当天来回（作者住了一晚洞爷湖观光酒店，日式湖景房能看羊蹄山）；JR Pass 要提前在官网指定车次和座席。", "notes": [{ "tone": "warn", "text": "看好 JR 接驳道南巴士的时间（洞爷站到温泉街）。", "from": "post" }] },
+    { "between": ["sapporo", "asahikawa"], "mode": ["tour"], "how": "旭川 + 圣诞树 + 瀑布 + 企鹅 + 精灵露台全都想玩，报一日游最省事。" },
+    { "between": ["chitose", "sapporo"], "mode": ["jr"], "how": "落地在新千岁机场领取 JR Pass 纸质票；去机场的车不用提前指定座位。" }
+  ]
+}

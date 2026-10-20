@@ -1,0 +1,41 @@
+{
+  "kind": "itinerary",
+  "summary": "二刷 9 天 8 晚函进札出：东京 1 天 → 函馆 2 天 → 洞爷登别 1 天 → 札幌 5 天（滑雪、小樽）；每顿饭都写了店名。",
+  "days": 9,
+  "when": "春节",
+  "bases": ["hakodate", "noboribetsu", "sapporo"],
+  "in": "hakodate-airport",
+  "out": "cts",
+  "style": ["函进札出", "二刷", "吃货"],
+  "plan": [
+    { "day": 1, "title": "香港 → 东京", "stops": ["tokyo"] },
+    { "day": 2, "title": "东京 → 函馆：朝市 → 红砖仓库花火大会", "stay": "hakodate", "stops": ["hakodate-airport", "asaichi", "kanemori"] },
+    { "day": 3, "title": "函馆全程步行：大森海岸 → 红砖仓库 → 八幡坂 → 元町 → 函馆山", "stay": "hakodate", "stops": ["omori", "kanemori", "hachimanzaka", "motomachi", "cafe-dici", "murakami", "hakodateyama"] },
+    { "day": 4, "title": "函馆 → 洞爷湖玩 2–3 小时 → 登别温泉酒店", "stay": "noboribetsu", "stops": ["toya-lake", "noboribetsu"] },
+    { "day": 5, "title": "登别 → 札幌：时计台 → 薄野 → 狸小路", "stay": "sapporo", "stops": ["hanamaru-sapporo", "clock-tower", "susukino", "tanukikoji"] },
+    { "day": 6, "title": "手稻滑雪场一日团（含教学和接送）", "stay": "sapporo", "stops": ["teine"] },
+    { "day": 7, "title": "小樽：八音盒 → Kitty 咖啡 → 商业街 → 运河 → 船见坂 → 天狗山", "stay": "sapporo", "stops": ["minami-otaru", "musicbox", "kitty-otaru", "sakaimachi", "otaru-canal", "funamizaka", "tenguyama"] },
+    { "day": 8, "title": "中岛公园 → 北海道神宫 → 白色恋人公园", "stay": "hotel-vessel", "stops": ["nakajima", "jingu", "shiroi-koibito"] },
+    { "day": 9, "title": "札幌逛 PARCO、大丸，买伴手礼", "stops": ["sapporo-st", "cts"] }
+  ],
+  "notes": [
+    { "place": "hakodate", "tone": "good", "text": "更推荐函馆进：不走回头路，最后一天留给札幌买买买，函馆购物的地方很少。", "from": "post" },
+    { "place": "minami-otaru", "tone": "good", "text": "札幌站坐 JR 到南小樽，选右边靠窗可看海。", "from": "post" },
+    { "place": "tenguyama", "tone": "info", "text": "小樽站坐巴士约 20 分钟到天狗山。", "from": "post" },
+    { "place": "toya-lake", "tone": "info", "text": "评论：拖着行李在洞爷湖玩方便吗？纠结住洞爷还是登别。", "from": "comment" },
+    { "place": "noboribetsu", "tone": "good", "text": "作者回复：住登别的温泉酒店非常不错（第一滝本馆）。", "from": "comment" },
+    { "place": "asahikawa", "tone": "info", "text": "作者回复：时间充足推荐去旭川，否则交通不方便，可以报一日团；留两天住旭川能把旭川美瑛都玩了。", "from": "comment" },
+    { "place": "teine", "tone": "warn", "text": "作者回复：不太推荐自己报的那个滑雪一日团，多看看评价再订。", "from": "comment" }
+  ],
+  "tips": [
+    { "topic": "美食", "text": "函馆：十字屋珈琲、KINGBEAR、村上海胆、串山串蔵；札幌：根室花丸、らーめん輝風、NIKUAZABU、Sumiya、Mermaid Coffee。", "from": "post" },
+    { "topic": "路线", "text": "作者回复：7 天 6 晚只去两三个地方，建议住札幌玩周边（小樽、旭川、美瑛），天气好有时间再去洞爷湖和登别。", "from": "comment" },
+    { "topic": "机票", "text": "作者回复：七八月就买了 2 月春节的机票，一直蹲低价；深圳直飞太贵，买香港到东京中转便宜很多。", "from": "comment" }
+  ],
+  "legs": [
+    { "between": ["hakodate", "toya"], "day": 4, "mode": ["jr"], "how": "函馆坐 JR 到洞爷，在洞爷湖玩 2–3 小时。", "notes": [{ "tone": "good", "text": "作者回复：洞爷 JR 站和洞爷湖温泉巴士站都能寄存行李，拖着箱子也能玩。", "from": "comment" }] },
+    { "between": ["toya", "noboribetsu"], "day": 4, "mode": ["jr"], "how": "洞爷继续坐 JR 到登别，住温泉酒店（作者住第一滝本馆）。" },
+    { "between": ["noboribetsu", "sapporo"], "day": 5, "mode": ["jr"], "how": "登别坐 JR 到札幌。" },
+    { "between": ["sapporo", "otaru"], "day": 7, "mode": ["jr", "bus"], "how": "札幌站坐 JR 到南小樽站，选右边靠窗可以看海；小樽站坐巴士约 20 分钟到天狗山。" }
+  ]
+}

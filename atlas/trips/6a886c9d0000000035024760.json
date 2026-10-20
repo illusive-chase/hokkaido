@@ -1,0 +1,48 @@
+{
+  "kind": "itinerary",
+  "summary": "一万元 9 天 8 晚 solo：札幌胶囊旅馆 + 5 日 JR Pass，小樽、旭川美瑛、洞爷、函馆，最后被暴雪困在苫小牧。",
+  "days": 9,
+  "when": "1 月中下旬",
+  "bases": ["sapporo", "hakodate"],
+  "in": "cts",
+  "out": "cts",
+  "style": ["solo", "穷游", "暴雪"],
+  "budget": "约 1 万元（福州札幌往返 2600；暴雪改签多花 800）",
+  "plan": [
+    { "day": 1, "title": "下午三点到札幌", "stay": "sapporo", "stops": ["cts", "sapporo"] },
+    { "day": 2, "title": "札幌市区", "stay": "sapporo", "stops": ["sapporo"] },
+    { "day": 3, "title": "札幌市区", "stay": "sapporo", "stops": ["sapporo"] },
+    { "day": 4, "title": "小樽往返巡礼情书，回程钱函下车看海", "stay": "sapporo", "stops": ["otaru", "zenibako"] },
+    { "day": 5, "title": "旭川永旺 → 美瑛（大雪封车，只看了瀑布）", "stay": "sapporo", "stops": ["asahikawa-st", "biei-st", "shirahige"] },
+    { "day": 6, "title": "7 点出发洞爷湖，下午到函馆，晚上函馆山", "stay": "hotel-premier-hakodate", "stops": ["toya-lake", "hakodateyama"] },
+    { "day": 7, "title": "函馆巡礼柯南", "stay": "hotel-premier-hakodate", "stops": ["hakodate"] },
+    { "day": 8, "title": "计划函馆直接去新千岁，列车因暴雪卡在苫小牧，被迫改签", "stops": ["cts"] }
+  ],
+  "notes": [
+    { "place": "sapporo", "tone": "info", "text": "札幌住胶囊酒店，五晚 800 元，有大澡堂可以泡澡（男士专用）；日本的青旅都很干净。", "from": "post" },
+    { "place": "hotel-premier-hakodate", "tone": "good", "text": "两晚 680 元，柯南同款；早餐非常好吃，楼下就是药妆店、函馆早市和函馆站。", "from": "post" },
+    { "place": "biei-st", "tone": "warn", "text": "中午大雪封车一两个小时，三四点才到美瑛，只看了瀑布。", "from": "post" },
+    { "place": "cts", "tone": "good", "text": "新千岁机场有温泉酒店可以过夜，便宜实惠。", "from": "post" },
+    { "place": "zenibako", "tone": "good", "text": "作者回复：风景最喜欢钱函和洞爷；体验最好的城市是札幌和函馆。", "from": "comment" },
+    { "place": "cts", "tone": "info", "text": "新千岁机场有温泉酒店可以过夜，便宜实惠，但要排队。", "from": "post" }
+  ],
+  "tips": [
+    { "topic": "交通", "text": "在 Agoda 花 900 元买了 5 天 JR Pass，札幌去小樽、旭川、函馆都用得上，能无限坐指定席，全程省了 900 多。", "from": "post" },
+    { "topic": "交通", "text": "札幌买了两天地铁一日券，函馆买了一天有轨电车一日券。", "from": "post" },
+    { "topic": "天气", "text": "一定要做好大暴雪交通瘫痪的准备，提前看天气预报。", "from": "post" },
+    { "topic": "时间", "text": "四点左右天黑，公交也挺早就没了，提前在谷歌地图上规划好。", "from": "post" },
+    { "topic": "交通", "text": "作者回复：JR Pass 有三种；只在札幌、旭川一带玩买「札幌—富良野」Pass，要去洞爷、函馆买北海道全域 Pass。只是函馆到札幌、札幌往返小樽，其余报团的话不回本，不必买。", "from": "comment" },
+    { "topic": "交通", "text": "作者回复：旭川美瑛只有一天可以跟团，一天以上就自由行，没有必须包车的景点。", "from": "comment" },
+    { "topic": "其他", "text": "作者回复：机票 2500、交通约 1500、住宿 1500–2000，加吃喝购物共约 9000 元。", "from": "comment" }
+  ],
+  "legs": [
+    { "between": ["sapporo", "otaru"], "day": 4, "mode": ["jr"], "how": "当天往返小樽巡礼情书，回程在钱函站下车看海。" },
+    { "between": ["sapporo", "asahikawa"], "day": 5, "mode": ["jr"], "how": "早上札幌出发，中午到旭川，在站前永旺逛了一会。" },
+    { "between": ["asahikawa", "biei"], "day": 5, "mode": ["jr", "bus"], "how": "三四点到美瑛，晚上 7 点回札幌。", "notes": [{ "tone": "warn", "text": "中午大雪封车一两个小时，到美瑛只来得及看白须瀑布。", "from": "post" }, { "tone": "info", "text": "作者回复：JR Pass 不能坐旭川到美瑛这种特殊线路。", "from": "comment" }] },
+    { "between": ["sapporo", "toya"], "day": 6, "mode": ["jr"], "how": "早上 7 点多札幌出发，8:30 到洞爷，湖边玩一个中午。", "time": "约 1.5 小时", "notes": [{ "tone": "info", "text": "作者回复：行李就拖着走，列车上每节车厢都有放箱子的地方。", "from": "comment" }] },
+    { "between": ["toya", "hakodate"], "day": 6, "mode": ["jr"], "how": "下午 2:30 从洞爷出发，5 点到函馆，晚上直接上函馆山。", "time": "约 2.5 小时" },
+    { "between": ["hakodate", "chitose"], "day": 8, "mode": ["jr"], "how": "计划从函馆坐 JR 直接去新千岁机场。", "notes": [{ "tone": "warn", "text": "札幌大雪导致列车瘫痪，卡在苫小牧站，被迫改签到两天后，多花了 800 元。评论里同一时间段（1 月 25–26 日）落地的人也遇到 JR 全线停运。", "from": "post" }] },
+    { "between": ["asahikawa", "hakodate"], "mode": ["jr"], "how": "作者回复：旭川坐丁香号（Lilac）到札幌，换北斗号到函馆，约 6 小时，一半路程有海景；不买 JR Pass 的话更建议坐飞机。", "time": "约 6 小时", "from": "comment" },
+    { "between": ["sapporo", "hakodate"], "mode": ["bus", "jr"], "how": "作者回复：想省钱的话札幌到函馆有巴士；不过北斗号风景很好，还是推荐北斗。", "from": "comment" }
+  ]
+}
