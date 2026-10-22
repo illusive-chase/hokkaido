@@ -1,18 +1,29 @@
 import { useEffect, useState, type ReactNode } from 'react'
-import { imgUrl, placeById, thumbUrl, tripById, TONE_LABEL } from '../data'
+import { imgPath, placeById, thumbPath, tripById, TONE_LABEL } from '../data'
 import type { Note, Tone } from '../types'
+import { knownMedia, mediaUrl } from '../vault'
 
 export function Img({ trip, i, thumb, alt, className }: { trip: string; i: number; thumb?: boolean; alt?: string; className?: string }) {
-  const [ok, setOk] = useState(true)
-  if (!ok) return <div className={`img-missing ${className ?? ''}`} aria-label="本地没有这张图" />
+  const path = thumb ? thumbPath(trip, i) : imgPath(trip, i)
+  // 部署出去的图片是密文，要先下载、解密；undefined 是还在解，null 是没有这张图
+  const [src, setSrc] = useState(() => knownMedia(path))
+  useEffect(() => {
+    let live = true
+    const known = knownMedia(path)
+    setSrc(known)
+    if (known === undefined) mediaUrl(path).then((u) => { if (live) setSrc(u) })
+    return () => { live = false }
+  }, [path])
+  if (src === undefined) return <div className={`img-missing loading ${className ?? ''}`} aria-label="正在解密图片" />
+  if (src === null) return <div className={`img-missing ${className ?? ''}`} aria-label="本地没有这张图" />
   return (
     <img
       className={className}
-      src={thumb ? thumbUrl(trip, i) : imgUrl(trip, i)}
+      src={src}
       alt={alt ?? ''}
       loading="lazy"
       decoding="async"
-      onError={() => setOk(false)}
+      onError={() => setSrc(null)}
     />
   )
 }

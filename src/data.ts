@@ -1,10 +1,8 @@
-import areasJson from '../atlas/areas.json'
-import sourcesJson from '../atlas/sources.json'
-import type { Area, Place, PlaceAgg, Region, Source, Trip, TripAnno } from './types'
+import type { Area, Place, PlaceAgg, Region, Trip, TripAnno } from './types'
+import { atlas } from './vault'
 
-const placeFiles = import.meta.glob<Place[]>('../atlas/places/*.json', { eager: true, import: 'default' })
-const tripFiles = import.meta.glob<TripAnno>('../atlas/trips/*.json', { eager: true, import: 'default' })
-const sources = sourcesJson as unknown as Record<string, Source>
+// atlas/ 的数据在解锁以后才有（见 src/vault.ts），这个模块要等解锁以后再加载
+const { areas: areasJson, places: placeFiles, trips: tripFiles, sources } = atlas()
 
 export const regions: Region[] = areasJson.regions
 export const areas: Area[] = areasJson.areas
@@ -47,7 +45,7 @@ function buildTrip(id: string, a: TripAnno): Trip {
 }
 
 export const trips: Trip[] = Object.entries(tripFiles)
-  .map(([path, a]) => buildTrip(path.split('/').pop()!.replace('.json', ''), a))
+  .map(([id, a]) => buildTrip(id, a))
   .filter((t) => t.src)
   .sort((x, y) => y.src.counts.collected - x.src.counts.collected)
 export const tripById = new Map(trips.map((t) => [t.id, t]))
@@ -66,11 +64,11 @@ for (const t of trips) {
   for (const r of t.ratings ?? []) placeAgg.get(r.place)?.ratings.push({ ...r, trip: t.id })
 }
 
-/** 帖子的封面：第一张图 */
+/** local/ 里的图片和原文（npm run data 生成），用 src/vault.ts 的 mediaUrl / localFile 读 */
 export const pad2 = (i: number) => String(i).padStart(2, '0')
-export const imgUrl = (trip: string, i: number) => `/local/img/${trip}/${pad2(i)}.jpg`
-export const thumbUrl = (trip: string, i: number) => `/local/thumb/${trip}/${pad2(i)}.jpg`
-export const textUrl = (trip: string) => `/local/text/${trip}.json`
+export const imgPath = (trip: string, i: number) => `img/${trip}/${pad2(i)}.jpg`
+export const thumbPath = (trip: string, i: number) => `thumb/${trip}/${pad2(i)}.jpg`
+export const textPath = (trip: string) => `text/${trip}.json`
 
 export const KIND_LABEL: Record<Trip['kind'], string> = {
   itinerary: '多日行程',

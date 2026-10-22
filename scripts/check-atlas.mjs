@@ -12,6 +12,8 @@ const TONES = new Set(['good', 'warn', 'meh', 'info'])
 const FROM = new Set(['post', 'comment', 'editor'])
 const TRIP_KEYS = new Set(['kind', 'summary', 'days', 'when', 'season', 'bases', 'in', 'out', 'style', 'budget', 'partial', 'commercial', 'plan', 'photos', 'notes', 'tips', 'ratings', 'legs'])
 const MODES = new Set(['jr', 'bus', 'shuttle', 'car', 'charter', 'tour', 'flight', 'taxi'])
+/** 建议路线的每日交通还可以写市电、地铁、缆车 */
+const RIDE_MODES = new Set([...MODES, 'tram', 'subway', 'ropeway'])
 const LEG_KEYS = new Set(['between', 'day', 'mode', 'how', 'time', 'cost', 'from', 'notes'])
 const SLOTS = new Set(['am', 'pm', 'eve'])
 const ALT_KINDS = new Set(['snow', 'cloud', 'nosnow', 'sunny', 'makeup'])
@@ -22,6 +24,7 @@ export async function validate() {
   const out = []
   const { areas, regions, themes } = await readJson(join(ATLAS, 'areas.json'))
   const areaIds = new Set(areas.map((a) => a.id))
+  const away = new Set(areas.filter((a) => a.region === null).map((a) => a.id))
   const regionIds = new Set(regions.map((r) => r.id))
   const themeSet = new Set(themes)
   for (const a of areas) if (a.region !== null && !regionIds.has(a.region)) out.push(`区域 ${a.id}：未知大区 ${a.region}`)
@@ -34,7 +37,10 @@ export async function validate() {
       places.set(p.id, p)
       if (!PLACE_KINDS.has(p.kind)) out.push(`${at}：kind 不合法 ${p.kind}`)
       if (!areaIds.has(p.area)) out.push(`${at}：未知区域 ${p.area}`)
-      if (!Array.isArray(p.at) || p.at.length !== 2 || p.at[0] < 139 || p.at[0] > 146 || p.at[1] < 35 || p.at[1] > 46) out.push(`${at}：坐标不对 ${p.at}`)
+      // 北海道的地点要在北海道范围内；北海道以外、要画在地图上的要在日本范围内；offmap 的不画，只要求是一对数字
+      const [x, y] = Array.isArray(p.at) ? p.at : []
+      const box = p.offmap ? null : away.has(p.area) ? [122, 154, 24, 46] : [139, 146, 35, 46]
+      if (!Array.isArray(p.at) || p.at.length !== 2 || typeof x !== 'number' || typeof y !== 'number' || (box && (x < box[0] || x > box[1] || y < box[2] || y > box[3]))) out.push(`${at}：坐标不对 ${p.at}`)
       for (const t of p.themes ?? []) if (!themeSet.has(t)) out.push(`${at}：未知主题 ${t}`)
     }
   }
@@ -99,6 +105,15 @@ export async function validate() {
     }
   }
   const cite = (at, x) => { refs(at, x.refs); links(at, x.links) }
+  const BOOKING = new Set(['booked', 'pending'])
+  const booking = (at, b) => {
+    if (!b) return
+    if (!BOOKING.has(b.status)) out.push(`${at}：booking.status 应是 booked 或 pending ${b.status}`)
+    if (!b.what) out.push(`${at}：booking 缺 what`)
+    if (b.free != null && !/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/.test(b.free)) out.push(`${at}：booking.free 应写 YYYY-MM-DD HH:mm ${b.free}`)
+  }
+  // 联系方式和出处不同，只要求名字和 https 网址
+  const contact = (at, list) => { for (const l of list ?? []) if (!l.name || !/^https:\/\//.test(l.url ?? '')) out.push(`${at}：links 要有 name 和 https 网址`) }
   const planDir = join(ATLAS, 'plans')
   for (const f of existsSync(planDir) ? (await readdir(planDir)).filter((f) => f.endsWith('.json')) : []) {
     const p = await readJson(join(planDir, f))
@@ -117,20 +132,46 @@ export async function validate() {
     for (const [i, d] of (p.days ?? []).entries()) {
       const dt = `${at} D${d.day}`
       if (d.day !== (p.days[0]?.day ?? 1) + i) out.push(`${dt}：day 应该连续`)
+      if (d.date != null) {
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(d.date)) out.push(`${dt}：date 应写 YYYY-MM-DD ${d.date}`)
+        else if (i > 0 && p.days[i - 1].date && Date.parse(d.date) - Date.parse(p.days[i - 1].date) !== 864e5) out.push(`${dt}：date 应该比前一天晚一天 ${d.date}`)
+      }
       if (d.stay) place(dt, d.stay)
       refs(dt, d.stayRefs)
+      links(dt, d.stayLinks)
+      booking(`${dt} 住`, d.stayBooking)
       if (d.move) {
         for (const a of d.move.between ?? []) if (!areaIds.has(a)) out.push(`${dt} move：未知区域 ${a}`)
         for (const m of d.move.mode ?? []) if (!MODES.has(m)) out.push(`${dt} move：mode 不合法 ${m}`)
         cite(`${dt} move`, d.move)
+        booking(`${dt} move`, d.move.booking)
       }
       for (const s of d.slots ?? []) {
         if (!SLOTS.has(s.slot)) out.push(`${dt}：slot 不合法 ${s.slot}`)
         for (const id of s.stops ?? []) place(dt, id)
         cite(dt, s)
+        booking(`${dt} ${s.slot}`, s.booking)
         for (const a of s.alts ?? []) alt(`${dt} ${s.slot}`, a)
       }
       for (const a of d.alts ?? []) alt(`${dt} 整天`, a)
+      for (const [k, r] of (d.rides ?? []).entries()) {
+        const rt = `${dt} rides[${k}]`
+        place(rt, r.from)
+        place(rt, r.to)
+        if (!RIDE_MODES.has(r.mode)) out.push(`${rt}：mode 不合法 ${r.mode}`)
+        if (!r.what) out.push(`${rt}：缺 what`)
+      }
+    }
+    const todoIds = new Set()
+    for (const t of p.todos ?? []) {
+      const tt = `${at} todos ${t.id}`
+      if (!t.id || todoIds.has(t.id)) out.push(`${tt}：id 缺失或重复`)
+      todoIds.add(t.id)
+      if (t.kind !== 'mail' && t.kind !== 'task') out.push(`${tt}：kind 应是 mail 或 task ${t.kind}`)
+      if (!t.title) out.push(`${tt}：缺 title`)
+      if (t.by != null && !/^\d{4}-\d{2}-\d{2}$/.test(t.by)) out.push(`${tt}：by 应写 YYYY-MM-DD ${t.by}`)
+      if (t.day != null && !(p.days ?? []).some((d) => d.day === t.day)) out.push(`${tt}：没有第 ${t.day} 天`)
+      contact(tt, t.links)
     }
   }
   return out

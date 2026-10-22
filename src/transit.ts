@@ -5,8 +5,10 @@ type LngLat = [number, number]
 
 export const MODE_LABEL: Record<TransitMode, string> = {
   jr: 'JR', bus: '巴士', shuttle: '接驳车', car: '自驾', charter: '包车/拼车', tour: '一日游团', flight: '飞机', taxi: '打车',
+  tram: '市电', subway: '地铁', ropeway: '缆车',
 }
-export const MODES = Object.keys(MODE_LABEL) as TransitMode[]
+/** 帖子里写城际交通用的方式（城际图层的筛选）；市电、地铁、缆车只在建议路线里用 */
+export const MODES: TransitMode[] = ['jr', 'bus', 'shuttle', 'car', 'charter', 'tour', 'flight', 'taxi']
 
 /** 这些话题的通用建议算「交通」，在城际图层显示 */
 export const TRANSIT_TOPICS = new Set(['交通', '机票'])
@@ -19,7 +21,8 @@ export const areaAnchor = new Map<string, LngLat>()
 {
   const byArea = new Map<string, { at: LngLat; kind: string }[]>()
   for (const { place } of placeAgg.values()) {
-    if (place.offmap) continue
+    // 北海道以外的地点只在建议路线里画，不进城际和城市内图层
+    if (place.offmap || !areaById.get(place.area)?.region) continue
     byArea.set(place.area, [...(byArea.get(place.area) ?? []), place])
   }
   for (const [a, list] of byArea) {

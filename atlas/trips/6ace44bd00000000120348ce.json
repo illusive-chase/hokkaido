@@ -1,9 +1,0 @@
-{
-  "kind": "review",
-  "summary": "只有图没有正文：正对札幌电视塔的 cafe kanon 窗边位，评论区补了店名和位置。",
-  "bases": ["sapporo"],
-  "photos": [{ "place": "cafe-kanon", "img": [1, 2, 3, 4, 5, 6, 7] }],
-  "notes": [
-    { "place": "cafe-kanon", "tone": "info", "text": "作者回复：店名 cafe kanon，离札幌站不远。", "from": "comment" }
-  ]
-}

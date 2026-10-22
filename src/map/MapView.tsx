@@ -3,8 +3,7 @@ import maplibregl, { type GeoJSONSource, type LayerSpecification, type Map as Ml
 import type { FeatureCollection } from 'geojson'
 import { baseLayers, baseStyle } from './style'
 import { addIcons } from './icons'
-import { ALT_META } from '../plan'
-import { areaPoints, boundsOfPts, corridors, netEdges, netNodes, placePoints, planAlts, planLines, planStays, planStops, routes, type RouteSpec } from './geo'
+import { areaPoints, boundsOfPts, corridors, netEdges, netNodes, placePoints, planAlts, planLines, planRide, planStays, planStops, routes, type RouteSpec } from './geo'
 import type { MapPalette } from '../theme'
 import type { Elem } from '../data'
 import type { EdgeView } from '../transit'
@@ -28,7 +27,7 @@ const AREA_LAYERS = ['area', 'area-label']
 const DETAIL_LAYERS = ['corridor', 'place', 'place-icon', 'place-label', 'shop-label']
 const CITY_LAYERS = [...AREA_LAYERS, ...DETAIL_LAYERS, 'route-casing', 'route', 'place-halo', 'place-hl', 'place-hl-label']
 const NET_LAYERS = ['net-edge-casing', 'net-edge-dash', 'net-edge', 'net-hit', 'net-node', 'net-node-label']
-const PLAN_LAYERS = ['plan-alt-casing', 'plan-alt', 'plan-alt-hit', 'plan-line-casing', 'plan-line', 'plan-stop', 'plan-stop-label', 'plan-stay', 'plan-stay-mark', 'plan-stay-label']
+const PLAN_LAYERS = ['plan-line-casing', 'plan-line', 'plan-alt-casing', 'plan-alt', 'plan-ride-casing', 'plan-ride', 'plan-stop-hit', 'plan-stop', 'plan-stop-label', 'plan-stay', 'plan-stay-mark', 'plan-stay-label']
 /** 城际图层只留海陆轮廓：城市和城市之间的边就是全部内容 */
 const BASE_DETAIL = ['wood', 'waterway', 'building', 'road-minor', 'road-major', 'rail', 'rail-tunnel', 'place-name', 'village-name']
 /** 建议路线图层要看到路网和铁路，但不要建筑和底图地名 */
@@ -183,15 +182,17 @@ function overlayLayers(p: MapPalette): LayerSpecification[] {
     },
 
     // —— 建议路线 ——
+    // 线在下、点在上；备选的虚线只是参考，不接收点击，点地图上的圆点不会误选备选
     { id: 'plan-line-casing', type: 'line', source: 'plan-line',
       layout: { 'line-cap': 'round', 'line-join': 'round' },
       paint: { 'line-color': p.ring, 'line-width': ['+', ['case', ['get', 'cross'], 3.2, 2.2], 3], 'line-opacity': ['case', ['get', 'lit'], 0.85, 0.45] },
     },
+    // 选了备选的那几段换成备选色，一眼看出哪里改过
     {
       id: 'plan-line', type: 'line', source: 'plan-line',
       layout: { 'line-cap': 'round', 'line-join': 'round' },
       paint: {
-        'line-color': p.plan,
+        'line-color': ['case', ['get', 'alt'], p.planAlt, p.plan],
         'line-width': ['case', ['get', 'cross'], 3.2, 2.2],
         'line-opacity': ['case', ['get', 'dim'], 0.16, 1],
         'line-dasharray': ['case', ['get', 'cross'], ['literal', [2.2, 1.4]], ['literal', [1, 0]]],
@@ -199,24 +200,31 @@ function overlayLayers(p: MapPalette): LayerSpecification[] {
     },
     {
       id: 'plan-alt-casing', type: 'line', source: 'plan-alt',
-      paint: { 'line-color': p.ring, 'line-width': ['case', ['get', 'sel'], 6, 4], 'line-opacity': ['case', ['get', 'sel'], 0.9, 0.5] },
+      paint: { 'line-color': p.ring, 'line-width': ['case', ['get', 'hot'], 6, 4], 'line-opacity': ['case', ['get', 'hot'], 0.9, 0.4] },
     },
-    // 分支一律虚线：颜色再配图例，也不只靠颜色区分
     {
       id: 'plan-alt', type: 'line', source: 'plan-alt',
       paint: {
         'line-color': p.planAlt,
-        'line-width': ['case', ['get', 'sel'], 2.6, 1.6],
-        'line-opacity': ['case', ['get', 'sel'], 1, ['get', 'lit'], 0.8, ['get', 'dim'], 0.08, 0.3],
+        'line-width': ['case', ['get', 'hot'], 2.6, 1.4],
+        'line-opacity': ['case', ['get', 'hot'], 1, 0.5],
         'line-dasharray': ['literal', [1.4, 1.6]],
       },
     },
-    { id: 'plan-alt-hit', type: 'line', source: 'plan-alt',
-      paint: { 'line-color': p.ink, 'line-width': 16, 'line-opacity': 0.001 } },
+    // 侧栏悬停的一段交通
+    { id: 'plan-ride-casing', type: 'line', source: 'plan-ride',
+      layout: { 'line-cap': 'round' },
+      paint: { 'line-color': p.ring, 'line-width': 9, 'line-opacity': 0.95 } },
+    { id: 'plan-ride', type: 'line', source: 'plan-ride',
+      layout: { 'line-cap': 'round' },
+      paint: { 'line-color': p.ink, 'line-width': 4 } },
+    // 看不见的大圆：圆点小，点起来费劲
+    { id: 'plan-stop-hit', type: 'circle', source: 'plan-stop',
+      paint: { 'circle-radius': 13, 'circle-color': p.ink, 'circle-opacity': 0.001 } },
     {
       id: 'plan-stop', type: 'circle', source: 'plan-stop',
       paint: {
-        'circle-radius': ['case', ['all', ['get', 'alt'], ['get', 'lit']], 4.2, ['get', 'lit'], 9.5, ['case', ['get', 'alt'], 3, 5]],
+        'circle-radius': ['case', ['all', ['get', 'alt'], ['get', 'lit']], 4.5, ['get', 'lit'], 8, ['case', ['get', 'alt'], 3, 5]],
         'circle-color': ['case', ['get', 'alt'], p.planAlt, p.plan],
         'circle-opacity': ['case', ['get', 'lit'], 1, 0.42],
         'circle-stroke-color': p.ring,
@@ -234,34 +242,35 @@ function overlayLayers(p: MapPalette): LayerSpecification[] {
         'text-radial-offset': 0.85,
         'text-justify': 'auto',
         'text-max-width': 9,
+        'symbol-sort-key': ['-', 0, ['get', 'rank']],
       },
       paint: { 'text-color': ['case', ['get', 'alt'], p.planAlt, p.ink], 'text-halo-color': p.ring, 'text-halo-width': 1.8 },
     },
     {
       id: 'plan-stay', type: 'circle', source: 'plan-stay',
-      filter: ['==', ['get', 'kind'], 'stay'],
       paint: {
-        'circle-radius': 13,
-        'circle-color': p.land,
-        'circle-opacity': ['case', ['get', 'lit'], 1, 0.5],
-        'circle-stroke-color': ['case', ['get', 'lit'], p.plan, p.muted],
-        'circle-stroke-width': 2,
+        'circle-radius': ['case', ['get', 'hl'], 16, 13],
+        'circle-color': ['case', ['get', 'hl'], p.plan, p.land],
+        'circle-opacity': ['case', ['any', ['get', 'lit'], ['get', 'hl']], 1, 0.5],
+        'circle-stroke-color': ['case', ['get', 'hl'], p.ring, ['get', 'lit'], p.plan, p.muted],
+        'circle-stroke-width': ['case', ['get', 'hl'], 3, 2],
       },
     },
     {
       id: 'plan-stay-mark', type: 'symbol', source: 'plan-stay',
-      filter: ['==', ['get', 'kind'], 'stay'],
       layout: { 'text-field': ['get', 'mark'], 'text-font': ['Noto Sans Regular'], 'text-size': 10.5, 'text-allow-overlap': true, 'symbol-sort-key': ['-', 0, ['get', 'day']] },
-      paint: { 'text-color': ['case', ['get', 'lit'], p.ink, p.muted], 'text-halo-color': p.ring, 'text-halo-width': 1.2 },
+      paint: { 'text-color': ['case', ['get', 'hl'], p.ring, ['get', 'lit'], p.ink, p.muted], 'text-halo-color': ['case', ['get', 'hl'], p.plan, p.ring], 'text-halo-width': 1.2 },
     },
+    // 看全程时标区域名，看某一天或者悬停时标酒店名
     {
       id: 'plan-stay-label', type: 'symbol', source: 'plan-stay',
-      filter: ['==', ['get', 'kind'], 'stay'],
+      filter: ['any', ['get', 'hl'], ['==', ['get', 'kind'], 'stay']],
       layout: {
-        'text-field': ['get', 'name'], 'text-font': ['Noto Sans Regular'], 'text-size': 11,
-        'text-variable-anchor': ['left', 'right', 'top', 'bottom'], 'text-radial-offset': 1.5, 'text-justify': 'auto', 'text-max-width': 9,
+        'text-field': ['get', 'label'], 'text-font': ['Noto Sans Regular'], 'text-size': ['case', ['get', 'hl'], 12.5, 11],
+        'text-variable-anchor': ['left', 'right', 'top', 'bottom'], 'text-radial-offset': 1.5, 'text-justify': 'auto', 'text-max-width': 10,
+        'symbol-sort-key': ['case', ['get', 'hl'], 0, 1],
       },
-      paint: { 'text-color': ['case', ['get', 'lit'], p.ink, p.muted], 'text-halo-color': p.ring, 'text-halo-width': 1.6 },
+      paint: { 'text-color': ['case', ['any', ['get', 'lit'], ['get', 'hl']], p.ink, p.muted], 'text-halo-color': p.ring, 'text-halo-width': 1.6 },
     },
 
     // —— 城际通行 ——
@@ -365,9 +374,12 @@ export interface MapViewProps {
   // 建议路线
   plan: SgPlan | null
   planDay: number | null
-  planAlt: string | null
-  onPickAlt: (key: string) => void
-  onHoverAlt: (key: string | null) => void
+  /** 选中的备选 */
+  planPicked: Set<string>
+  /** 侧栏里悬停的备选、地点、一段交通 */
+  planPreview: string | null
+  planHover: string | null
+  planRide: string | null
   onPickPlanDay: (day: number) => void
 }
 
@@ -401,7 +413,7 @@ export default function MapView(props: MapViewProps) {
 
     map.on('load', () => {
       addIcons(map)
-      for (const id of ['area', 'corridor', 'route', 'place', 'net-edge', 'net-node', 'plan-line', 'plan-alt', 'plan-stop', 'plan-stay']) map.addSource(id, { type: 'geojson', data: EMPTY })
+      for (const id of ['area', 'corridor', 'route', 'place', 'net-edge', 'net-node', 'plan-line', 'plan-alt', 'plan-ride', 'plan-stop', 'plan-stay']) map.addSource(id, { type: 'geojson', data: EMPTY })
       for (const l of overlayLayers(propsRef.current.palette)) map.addLayer(l)
       ready.current = true
       sync()
@@ -477,38 +489,25 @@ export default function MapView(props: MapViewProps) {
       if (key) propsRef.current.onPickEdge(key)
     })
 
-    // 建议路线的地点和住处：悬停显示是哪天的安排，点击打开当天
-    for (const layer of ['plan-stop', 'plan-stay']) {
+    // 建议路线的地点和住处：悬停显示是哪天的安排，点击打开当天。
+    // 地点用看不见的大圆接收鼠标；住处画在最上面，点在住处上时交给住处
+    for (const layer of ['plan-stop-hit', 'plan-stay']) {
       map.on('mousemove', layer, (e) => {
+        if (layer === 'plan-stop-hit' && map.queryRenderedFeatures(e.point, { layers: ['plan-stay'] }).length) return
         const f = e.features?.[0]
         if (!f) return
         map.getCanvas().style.cursor = 'pointer'
         const p = f.properties as { name: string; when?: string; kind?: string; mark?: string }
-        const sub = p.when ?? (p.kind === 'end' ? (p.mark === '进' ? '第一天从这里进' : '最后一天从这里走') : `住第 ${p.mark} 晚`)
+        const sub = p.when ?? (p.kind === 'end' ? (p.mark === '进' ? '从这里进北海道' : '从这里离开北海道') : `住第 ${p.mark} 晚`)
         tip(`<b>${p.name}</b><span>${sub} · 点击看这一天</span>`, pointOf(f))
       })
       map.on('mouseleave', layer, untip)
       map.on('click', layer, (e) => {
-        if (layer === 'plan-stop' && map.queryRenderedFeatures(e.point, { layers: ['plan-stay'] }).length) return
+        if (layer === 'plan-stop-hit' && map.queryRenderedFeatures(e.point, { layers: ['plan-stay'] }).length) return
         const day = e.features?.[0]?.properties?.day
         if (day != null) propsRef.current.onPickPlanDay(Number(day))
       })
     }
-    // 建议路线：悬停分支看它是什么情况下的备选，点它选中
-    map.on('mousemove', 'plan-alt-hit', (e) => {
-      const f = e.features?.[0]
-      if (!f) return
-      map.getCanvas().style.cursor = 'pointer'
-      const p = f.properties as { key: string; kind: string; day: number }
-      propsRef.current.onHoverAlt(p.key)
-      const meta = ALT_META[p.kind as keyof typeof ALT_META]
-      tip(`<b>${meta.icon} D${p.day} · ${meta.label}</b><span>点击选为这次的分支</span>`, [e.lngLat.lng, e.lngLat.lat])
-    })
-    map.on('mouseleave', 'plan-alt-hit', () => { untip(); propsRef.current.onHoverAlt(null) })
-    map.on('click', 'plan-alt-hit', (e) => {
-      const key = e.features?.[0]?.properties?.key
-      if (key) propsRef.current.onPickAlt(key)
-    })
 
     const ro = new ResizeObserver(() => map.resize())
     ro.observe(el.current!)
@@ -528,10 +527,11 @@ export default function MapView(props: MapViewProps) {
     vis(BASE_DETAIL, city)
     if (p.layer === 'plan') vis(PLAN_BASE, true)
     if (p.layer === 'plan') {
-      const o = { day: p.planDay, alt: p.planAlt, hover: null }
+      const o = { day: p.planDay, picked: p.planPicked, preview: p.planPreview, hover: p.planHover, ride: p.planRide }
       if (p.plan) {
         ;(map.getSource('plan-line') as GeoJSONSource).setData(planLines(p.plan, o))
         ;(map.getSource('plan-alt') as GeoJSONSource).setData(planAlts(p.plan, o))
+        ;(map.getSource('plan-ride') as GeoJSONSource).setData(planRide(p.plan, o))
         ;(map.getSource('plan-stop') as GeoJSONSource).setData(planStops(p.plan, o))
         ;(map.getSource('plan-stay') as GeoJSONSource).setData(planStays(p.plan, o, p.areaNames))
       }
@@ -558,7 +558,7 @@ export default function MapView(props: MapViewProps) {
   useEffect(sync, [
     props.layer, props.overview, props.trips, props.routeSpecs, props.dimCorridors, props.elems, props.activePlaces, props.highlight, props.selectedPlace,
     props.edges, props.selectedEdge, props.hoverEdge, props.litEdges, props.litCities, props.selectedCity,
-    props.plan, props.planDay, props.planAlt,
+    props.plan, props.planDay, props.planPicked, props.planPreview, props.planHover, props.planRide,
   ])
 
   // 换主题：逐项重设底图和覆盖层的 paint

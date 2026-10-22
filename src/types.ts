@@ -24,8 +24,8 @@ export interface Tip { topic: string; text: string; from: From }
 export interface PlanDay { day: number; label?: string; title: string; stay?: string; stops: string[]; move?: string }
 export interface Rating { place: string; score: number; label: string }
 
-/** 城际交通方式 */
-export type TransitMode = 'jr' | 'bus' | 'shuttle' | 'car' | 'charter' | 'tour' | 'flight' | 'taxi'
+/** 交通方式。市电、地铁、缆车只在建议路线的每日交通里用 */
+export type TransitMode = 'jr' | 'bus' | 'shuttle' | 'car' | 'charter' | 'tour' | 'flight' | 'taxi' | 'tram' | 'subway' | 'ropeway'
 export interface LegNote { tone: Tone; text: string; from: From }
 /** 两个区域之间怎么走：一种方案（mode + how），或者只是对这段路的经验（notes） */
 export interface Leg {
@@ -122,6 +122,46 @@ export type AltKind = 'snow' | 'cloud' | 'nosnow' | 'sunny' | 'makeup'
 /** 帖子以外的出处：官网、时刻表等，写明查阅日期 */
 export interface SgLink { name: string; url: string; date: string }
 
+/** 已经订好的（机票、酒店、餐厅）或者正在订的；不写姓名、订单号、票号 */
+export interface SgBooking {
+  status: 'booked' | 'pending'
+  what: string
+  note?: string
+  /** 免费取消截止（当地时间），「YYYY-MM-DD HH:mm」 */
+  free?: string
+}
+
+/** 一天里一段主要的非步行交通：侧栏悬停时在地图上高亮，按钮跳到谷歌地图 */
+export interface SgRide {
+  from: string
+  to: string
+  mode: TransitMode
+  /** 「8:30 → 9:05」「约 35 分钟」 */
+  time?: string
+  /** 坐什么、在哪上车、多少钱 */
+  what: string
+}
+
+/** 出发前要办的事。mail 是要发邮件或表单问清楚的，带要问的事和日文草稿 */
+export interface SgTodo {
+  id: string
+  kind: 'mail' | 'task'
+  title: string
+  /** 最晚什么时候办，YYYY-MM-DD；不写就是尽早 */
+  by?: string
+  /** 和哪一天有关 */
+  day?: number
+  text?: string
+  /** 联系方式：表单、官网 */
+  links?: { name: string; url: string }[]
+  /** 联系电话（酒店公开的号码） */
+  tel?: string
+  /** 要问清楚的事 */
+  ask?: string[]
+  /** 日文草稿；〈 〉里的自己填 */
+  draft?: string
+}
+
 export interface SgAlt {
   kind: AltKind
   /** 触发条件，例如「有云雾，或者大风缆车停运」 */
@@ -149,6 +189,7 @@ export interface SgSlotItem {
   text: string
   refs?: string[]
   links?: SgLink[]
+  booking?: SgBooking
   alts?: SgAlt[]
 }
 
@@ -159,10 +200,13 @@ export interface SgMove {
   how: string
   refs?: string[]
   links?: SgLink[]
+  booking?: SgBooking
 }
 
 export interface SgDay {
   day: number
+  /** 日期，YYYY-MM-DD */
+  date?: string
   title: string
   /** 时间轴上的短标签，一般是当晚住的城市 */
   short: string
@@ -170,9 +214,13 @@ export interface SgDay {
   stay?: string
   stayNote?: string
   stayRefs?: string[]
+  stayLinks?: SgLink[]
+  stayBooking?: SgBooking
   move?: SgMove
+  /** 这一天主要的非步行交通，按顺序 */
+  rides?: SgRide[]
   slots: SgSlotItem[]
-  /** 影响整天的分支 */
+  /** 影响整天的分支：选中后换掉这一天所有时段 */
   alts?: SgAlt[]
 }
 
@@ -190,4 +238,6 @@ export interface SgPlan {
   /** 不针对某一天的应变规则，按主题分组 */
   rules: { title: string; kind: string; items: SgRule[] }[]
   days: SgDay[]
+  /** 出发前要办的事（预订窗口里显示，勾选状态只存在本机） */
+  todos?: SgTodo[]
 }

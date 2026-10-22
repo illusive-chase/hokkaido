@@ -17,8 +17,11 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
+      # atlas/ 是私有 submodule，这里不拉：网页只用 public/vault/ 里的密文（npm run seal 在本机生成）
       - name: Check out repository
         uses: actions/checkout@v4
+        with:
+          submodules: false
 
       - name: Set up Node.js
         uses: actions/setup-node@v4

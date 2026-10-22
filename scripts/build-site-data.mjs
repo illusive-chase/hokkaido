@@ -2,7 +2,7 @@
 // 从 data/notes/ 生成网站要用的数据。分两部分：
 //   atlas/sources.json   帖子元信息快照（标题、作者、互动数、图片尺寸），进 git，
 //                        这样没有 data/ 的机器也能跑起网站（只是没有图片和原文）
-//   public/local/        图片（统一转成 jpg）和原文、评论，不进 git
+//   local/               图片（统一转成 jpg）和原文、评论，不进 git；npm run seal 把它加密进 public/vault/
 // 评论优先用插件采集的 data/captures/<id>/comments.json，再补上 note.json 里它没有的几条。
 // 同时校验 atlas/ 里所有的地点、区域引用。
 //
@@ -17,7 +17,7 @@ import { validate } from './check-atlas.mjs'
 import { ATLAS, loadNote, NOTES as DATA, readJson, ROOT, stripEmoji } from './lib/notes.mjs'
 
 const run = promisify(execFile)
-const LOCAL = join(ROOT, 'public/local')
+const LOCAL = join(ROOT, 'local')
 const FULL_PX = 1600
 const THUMB_PX = 480
 const args = new Set(process.argv.slice(2))
@@ -106,7 +106,7 @@ async function main() {
 
   await writeFile(join(ATLAS, 'sources.json'), JSON.stringify(sources, null, 1) + '\n')
   console.log(`atlas/sources.json：${Object.keys(sources).length} 篇`)
-  if (!args.has('--no-media')) console.log(`public/local：${imgCount} 张图片${imgFailed.length ? `，${imgFailed.length} 张失败` : ''}；${captured} 篇用了插件采集的评论`)
+  if (!args.has('--no-media')) console.log(`local/：${imgCount} 张图片${imgFailed.length ? `，${imgFailed.length} 张失败` : ''}；${captured} 篇用了插件采集的评论`)
   for (const f of imgFailed) console.warn('  ' + f)
   if (missing) console.warn(`! 有 ${missing} 篇行程既没有 data/notes 也没有旧快照`)
 

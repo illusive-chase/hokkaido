@@ -7,8 +7,9 @@
 ```
 data/notes/        ① 下载：帖子原样（正文、图片、前 5 条评论），不进 git   scripts/xhs-fetch.mjs
 data/captures/     ① 补全评论：登录后浏览时用插件存下的完整评论，不进 git  extension/
-atlas/             ② 整理：行程、地点、坐标、经验摘要，进 git              人工 / Claude 读帖子后编写
-public/local/      ③ 生成：网页用的图片（统一 jpg）和原文，不进 git          scripts/build-site-data.mjs
+atlas/             ② 整理：行程、地点、坐标、经验摘要，私有 submodule      人工 / Claude 读帖子后编写
+local/             ③ 生成：网页用的图片（统一 jpg）和原文，不进 git          scripts/build-site-data.mjs
+public/vault/      ④ 加密：atlas/ 和 local/ 的密文，进 git，公开部署        scripts/seal.mjs
 src/               网页（React + Vite + MapLibre）
 scripts/xhs-read.mjs  给人和 agent 读帖子用的命令行，把 ① 的原始数据转成精简的纯文本
 ```
@@ -19,8 +20,9 @@ scripts/xhs-read.mjs  给人和 agent 读帖子用的命令行，把 ① 的原�
    评论多、值得细看的帖子，再用插件补全评论（见下文「用插件补全评论」）。
 2. Claude 用 `npm run -s read` 读帖子（见下文「读帖子：`xhs-read`」），**不要直接 cat `note.json` / `comments.json`**。
    在 `atlas/trips/<noteId>.json` 写这篇的行程、城际交通（`legs`）、经验和照片对应；用到的新地点加进 `atlas/places/*.json`（坐标用 OSM Nominatim 查，查不到的标 `approx: true`）。
-3. 运行 `npm run data` 生成 `atlas/sources.json` 和 `public/local/`，同时校验所有引用。
+3. 运行 `npm run data` 生成 `atlas/sources.json` 和 `local/`，同时校验所有引用。
 4. `npm run dev` 打开网页查看。
+5. 要发布时运行 `npm run seal` 更新 `public/vault/`，先提交 `atlas/` 子仓库，再提交主仓库（见下文「加密与发布」）。
 
 ## 读帖子：`xhs-read`
 
@@ -71,14 +73,50 @@ npm run build    # 类型检查 + 打包到 dist/
 ```
 
 - 底图来自 OpenFreeMap（OpenStreetMap 数据），需要联网；其余数据都在本地。
-- 没有 `data/` 的机器也能跑起来：`atlas/` 和 `atlas/sources.json` 都在 git 里，只是没有图片和原文。
+- 开发时（`npm run dev`）直接读 `atlas/` 和 `local/` 的明文，不用输密码。没有 `atlas/`（没拉私有子仓库）的机器上，开发服务器会改读 `public/vault/` 的密文，要输密码。
 - 地图分三个图层，在左侧面板顶部切换，各自的卡片和详情互不影响：
-  - **建议路线**（默认打开）：综合全部帖子和评论，按用户的偏好排出来的逐日行程（`atlas/plans/`，见下文）。地图上实线是主线、粗虚线是跨城的一段，细虚线是备选分支；圆圈是住处，里面的数字是第几晚。左侧总览有住宿分段条、「天 × 上午/下午/傍晚」的时间轴（有备选的格子挂天气图标：❄ 暴雪·停运、☁ 阴天、◌ 没有雪、☀ 放晴、↺ 补上前几天），以及按主题分组的应变规则。点一天看细节：跨城交通、每个时段的安排和出处，以及这个时段的备选；点「换成这个」，时间轴和地图都会换成这个分支。URL 是 `#day=8&alt=8.0.1`。
+  - **建议路线**（默认打开）：综合全部帖子和评论，按用户的偏好和已经订好的机票、酒店排出来的逐日行程（`atlas/plans/`，见下文），出发时当手册用。地图上实线是路线、粗虚线是跨城的一段，换成备选的几段用备选色画；圆圈是住处，里面的数字是第几晚。北海道以外转机、过夜的地方也画在地图上，看全程时只框北海道，点到那一天再飞过去；国内的出发地和目的地不画。左侧总览有住宿分段条、「天 × 上午/下午/傍晚」的时间轴（换成备选的格子直接显示备选、标天气图标：❄ 暴雪·停运、☁ 阴天、◌ 没有雪、☀ 放晴、↺ 补上前几天）和应变规则。点一天看细节：最上面「今天的情况」每个位置一行单选（原计划 / 各个备选），选了以后下面的时段文字、时间轴和地图一起换成备选，整天的备选换掉一整天，几天的选择同时生效；「住和行」列出当天的住处和主要交通，悬停时在地图上标出住处、高亮这一段，按钮跳谷歌地图。地图上没选的备选是细虚线，只作参考、不能点；点圆点打开那一天。右上角「预订 · 待办」是单独的窗口：要发的确认邮件（要问的事和日文草稿，一键复制）、要订要约的事、免费取消截止、已订和在订的清单，勾选只存在本机。URL 是 `#day=3&alt=3.1.0,3.2.0`，窗口开着时加 `book`。
   - **城际通行**：地图上只剩城市（`atlas/areas.json` 的 20 个区域）和城市之间的边，底图隐去道路、铁路和地名。边的粗细是经过的帖子数；实线是有帖子写了怎么走，虚线是只在行程里经过。**点一条边**，左侧列出各帖子在这两座城市之间的走法（交通方式、时间、价格）和注意事项，以及「经过但没写怎么走」的帖子；点一个城市，列出它连着哪些城市。左侧「帖子」只显示路线链、交通方式和交通建议，不含景点和美食；「路段」按经过的帖子数列出所有边。可以按交通方式（JR、巴士、包车……）筛选。
   - **城市内**：景点、饮食、交通（车站、机场）、住宿四类元素，在地图上方分别开关，默认只开景点和交通。低缩放时按区域聚合，点聚合的圆放大；**点单个地点只打开详情，不移动、不缩放地图**。从左侧列表点开的地点不在视野里时，地图只平移过去、不改变缩放。帖子（类型、经过的区域、天数筛选，逐日行程、地点经验、原文评论）和地点（区域、主题筛选，推荐、注意事项、照片、「常和它排在同一天」）都在这一层。
 - 城市内图层最多选 3 条行程并排**对比**：逐日对照、区域覆盖天数、共同和独有的景点，地图上用三种颜色区分。
 - 视图状态写在 URL 的 hash 里（`#layer=transit&edge=hakodate~toya`、`#trip=…`、`#place=…`、`#cmp=a,b,c`），可以直接分享或收藏某个视图。
 - 浅色「雪地」和深色「蓝调时刻」两套主题，默认跟随系统。
+
+## 加密与发布
+
+仓库 `illusive-chase/hokkaido` 和 GitHub Pages 上的网页都是公开的。要保密的东西（建议路线里的机票、酒店、待办和邮件草稿，帖子整理，网友的图片和评论）都不以明文出现在公开仓库或网页源码里：
+
+| 内容 | 放在哪 | 公开吗 |
+|---|---|---|
+| `data/`（帖子原始数据） | 只在本机 | 不进 git |
+| `local/`（`npm run data` 生成的图片、原文） | 只在本机 | 不进 git |
+| `atlas/`（整理数据） | 私有仓库 `illusive-chase/hokkaido-atlas`，主仓库里是 submodule | 只公开一个提交号 |
+| `.vault-key`（密码） | 只在本机 | 不进 git |
+| `public/vault/`（上面两份的密文） | 主仓库 | 公开，部署进网页 |
+| `src/`、`scripts/`、`extension/`、README | 主仓库 | 公开，里面不写行程细节 |
+
+`npm run seal`（`scripts/seal.mjs`）先校验 `atlas/`，再把它整个拼成一份加密成 `public/vault/atlas.bin`，`local/` 里每个文件各加密成 `public/vault/m/<名字>.bin`：
+
+- 密码 → PBKDF2-SHA256（60 万次，盐在 `public/vault/meta.json`）→ AES-256-GCM 的密钥和 HMAC 的密钥。
+- 文件名是路径的 HMAC，看不出是哪篇帖子的第几张图；内容没变时密文也不变，git 里只有真正改过的文件会变。
+- 密码读环境变量 `VAULT_KEY`，没有就读仓库根目录的 `.vault-key`。换密码：改 `.vault-key` 后运行 `npm run seal -- --rekey`，所有文件名都会变。
+
+网页（`src/vault.ts`、`src/Gate.tsx`）打开时先要密码，用 WebCrypto 解开 `atlas.bin`，再加载地图和面板；图片和原文用到时再逐个下载、解密。可以勾选「在这台设备上记住」，存的是推导好的密钥，不是密码；右上角的锁按钮清掉它。
+
+局限：网页要在浏览器里解密，所以解密用的密钥终究要交给浏览器，换成非对称加密也一样，这里用的是对称加密。密码是 4 位数字时只有 1 万种可能，挡得住搜索引擎和随手翻源码的人，挡不住拿着 `atlas.bin` 专门暴力破解的人（每猜一次约 0.1 秒，一台电脑十几分钟就能试完）。要更安全就换长密码再 `--rekey`。改成加密之前推到 GitHub 的旧提交（`main` 的 825ce60 及以前、`page` 分支的旧网页包）里还有当时的明文，没有清理。
+
+发布步骤：
+
+```bash
+npm run data                     # 有新帖子或新图片时
+npm run seal                     # 更新 public/vault/
+git -C atlas add -A && git -C atlas commit -m "…" && git -C atlas push   # 先推私有子仓库
+git add atlas public/vault … && git commit -m "…" && git push            # 再推主仓库，触发 GitHub Pages
+```
+
+GitHub Actions 不拉 `atlas/` 子仓库，只用提交进来的 `public/vault/` 打包，所以不需要给它私有仓库的权限，也不需要密码。
+
+新机器上：`git clone --recurse-submodules git@github.com:illusive-chase/hokkaido.git`（已经克隆过的用 `git submodule update --init`），然后把密码写进 `.vault-key`。`local/` 可以用 `npm run data` 从 `data/` 重新生成。
 
 ## 整理数据 `atlas/`
 
@@ -100,7 +138,7 @@ npm run build    # 类型检查 + 打包到 dist/
 | `themes` | 主题，`areas.json` 里 `themes` 的值 |
 | `blurb` | 一句话介绍（可选） |
 | `approx` | 坐标只是大致位置（可选） |
-| `offmap` | 不在北海道，地图上不画（例如东京） |
+| `offmap` | 地图上不画（例如国内的机场）；坐标只要求是一对数字。北海道以外、但要画在建议路线里的（日本国内转机、过夜的地方）不写 `offmap`，它们所在区域的 `region` 是 `null`，只出现在建议路线图层，不进城际和城市内图层 |
 
 ### `atlas/trips/<noteId>.json`
 
@@ -145,8 +183,8 @@ npm run build    # 类型检查 + 打包到 dist/
 
 | 字段 | 说明 |
 |---|---|
-| `title` / `summary` / `when` | 标题、一段话概括、出行月份 |
-| `in` / `out` | 进出的机场（地点 id） |
+| `title` / `summary` / `when` | 标题、一段话概括、出行日期 |
+| `in` / `out` | 出发和回程的机场（地点 id）。地图上的「进」「出」标的是路线上第一个、最后一个北海道的机场 |
 | `prefs[]` | `{ q, a }`：用户回答过的偏好，总览里原样显示 |
 | `rules[]` | `{ title, kind, items[] }`：不针对某一天的应变规则（暴雪、阴天、行李、车票、装备），`items` 是 `{ text, refs?, links? }` |
 | `days[]` | 每天一项，见下表 |
@@ -155,15 +193,21 @@ npm run build    # 类型检查 + 打包到 dist/
 
 | 字段 | 说明 |
 |---|---|
-| `day` / `title` / `short` | 第几天（连续）、标题、时间轴上的短名（一般是当晚住的城市） |
-| `stay` / `stayNote` / `stayRefs` | 当晚住的地点、为什么住这里、出处。最后一天不写 `stay` |
-| `move` | 跨城那天的交通：`{ between, mode[], time?, how, refs?, links? }`，字段含义同 `legs` |
-| `slots[]` | `{ slot, time?, short, title, stops[], via?, text, refs?, links?, alts? }`：`slot` 是 `am` / `pm` / `eve`，同一时段可以有几项 |
+| `day` / `date` / `title` / `short` | 第几天（连续）、日期（`YYYY-MM-DD`，可选，必须逐日加一）、标题、时间轴上的短名（一般是当晚住的城市） |
+| `stay` / `stayNote` / `stayRefs` / `stayLinks` | 当晚住的地点、为什么住这里、帖子出处、官网出处。最后一天不写 `stay` |
+| `stayBooking` | 住处已订或在订，结构见下 |
+| `move` | 跨城那天的交通：`{ between, mode[], time?, how, refs?, links?, booking? }`，字段含义同 `legs` |
+| `rides[]` | 当天主要的非步行交通，按顺序：`{ from, to, mode, time?, what }`，`from` / `to` 是地点 id，`mode` 除了上面那些还可以写 `tram` 市电、`subway` 地铁、`ropeway` 缆车。网页上悬停高亮这一段，按钮跳谷歌地图查路线 |
+| `slots[]` | `{ slot, time?, short, title, stops[], via?, text, refs?, links?, booking?, alts? }`：`slot` 是 `am` / `pm` / `eve`，同一时段可以有几项 |
 | `alts[]` | 影响整天的备选，结构同下 |
+
+`booking` / `stayBooking`：`{ status, what, note?, free? }`。`status` 是 `booked` 已订 / `pending` 在订或还没订但要订；`what` 写订的是什么（航班号和时间、酒店名和晚数、餐厅和套餐），`note` 写取消规则、要和对方确认的事，`free` 是免费取消截止（当地时间，`YYYY-MM-DD HH:mm`）。连住的第二晚不用再写，沿用第一晚的。仓库是公开的，**不写姓名、订单号、票号、预约 ID**。
 
 备选分支（`slots[].alts[]` 和 `days[].alts[]`）：`{ kind, if, short, title, from?, stops[], text, refs?, links? }`。`kind` 是 `snow` 暴雪·停运 / `cloud` 阴天 / `nosnow` 没有雪 / `sunny` 放晴 / `makeup` 补上前几天落下的；`if` 写触发条件；`from` 是分支在地图上从哪个地点接出去，不写就从这个时段之前最后经过的地点接出去。
 
 `refs` 一律写帖子 ID 的前缀（前 8 位即可），网页上显示成作者名，点开跳到那篇帖子。帖子里没有、从官网或时刻表查到的信息（班次、营业期、预约规则）写进 `links[]`：`{ name, url, date }`，`date` 是查阅日期（`YYYY-MM-DD`），网页上和帖子出处并排显示、在新窗口打开；`slots[]`、`move`、分支和 `rules[].items[]` 都可以写。`npm run data` / `npm run check` 会校验地点、区域、交通方式、分支类型、每个出处都能对上唯一一篇帖子，以及 `links` 的网址和日期格式。
+
+`todos[]`（顶层，可选）：出发前要办的事，`{ id, kind, title, by?, day?, text?, links?, tel?, ask?, draft? }`。`kind` 是 `mail` 要发邮件或表单问清楚的 / `task` 要订要约的；`by` 是最晚哪天办（`YYYY-MM-DD`）；`links` 是 `{ name, url }`（联系表单、官网）；`tel` 写酒店公开的电话；`ask` 是要问的几件事；`draft` 是日文草稿，姓名、订单号留成〈 〉自己填，不写进仓库。
 
 住处一律提前订好：分支只换当天的景点和走法，不改住处。跨城那天遇到停运，分支写「等恢复、当天赶到原住处」；一整天走不了属于不可抗力，只在 `rules` 里写处理原则。
 

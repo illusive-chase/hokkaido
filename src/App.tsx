@@ -11,13 +11,16 @@ import { PlaceDetail, PlaceFilters, PlaceList } from './components/PlacePanels'
 import { CityDetail, EdgeDetail, EdgeList, TransitCard, TransitFilters, TransitTrip } from './components/Transit'
 import Compare from './components/Compare'
 import { PlanDayDetail, PlanOverview } from './components/Plan'
-import { altsOf, dayPoints, mainStops, plans } from './plan'
+import Bookings, { useTodoDone } from './components/Bookings'
+import { altSpot, altsOf, dayPoints, mainStops, pickAlt, plans } from './plan'
 import { Chip } from './components/bits'
+import { forget, sealed } from './vault'
 import type { Place } from './types'
 
 type Tab = 'trips' | 'places'
 type TTab = 'trips' | 'edges'
-type View = { layer: Layer; tab: Tab; ttab: TTab; trip: string | null; place: string | null; edge: string | null; city: string | null; day: number | null; alt: string | null }
+/** alt 是选中的备选，几天可以同时有；book 是「预订 · 待办」窗口开着 */
+type View = { layer: Layer; tab: Tab; ttab: TTab; trip: string | null; place: string | null; edge: string | null; city: string | null; day: number | null; alt: string[]; book: boolean }
 
 const regionOf = (p: Place) => areaById.get(p.area)?.region ?? null
 const areaNames = new Map(areas.map((a) => [a.id, a.name]))
@@ -39,7 +42,7 @@ function readHash(): View {
   const cityKeys = ['trip', 'place', 'cmp', 'tab'].some((k) => h.has(k))
   const layer: Layer = lp === 'transit' || lp === 'city' || lp === 'plan' ? lp : plan && !cityKeys ? 'plan' : 'city'
   const day = Number(h.get('day'))
-  const alt = h.get('alt')
+  const alt = (h.get('alt') ?? '').split(',').filter((k) => planAltKeys.has(k))
   return {
     layer,
     tab: h.get('tab') === 'places' ? 'places' : 'trips',
@@ -49,14 +52,16 @@ function readHash(): View {
     edge: layer === 'transit' && edge && allEdges.has(edge) ? edge : null,
     city: layer === 'transit' && city && areaAnchor.has(city) ? city : null,
     day: layer === 'plan' && plan?.days.some((d) => d.day === day) ? day : null,
-    alt: layer === 'plan' && alt && planAltKeys.has(alt) ? alt : null,
+    alt: layer === 'plan' ? alt.reduce<string[]>((cur, k) => pickAlt(cur, altSpot(k), k), []) : [],
+    book: layer === 'plan' && h.has('book'),
   }
 }
-function writeHash(v: View, cmp: string[]) {
+function writeHash(v: View, cmp: string[], replace = false) {
   const h = new URLSearchParams()
   if (v.layer !== 'plan' || !plan) h.set('layer', v.layer)
   if (v.layer === 'plan' && v.day != null) h.set('day', String(v.day))
-  if (v.layer === 'plan' && v.alt) h.set('alt', v.alt)
+  if (v.layer === 'plan' && v.alt.length) h.set('alt', v.alt.join(','))
+  if (v.layer === 'plan' && v.book) h.set('book', '')
   if (v.layer === 'city' && v.tab !== 'trips') h.set('tab', v.tab)
   if (v.layer === 'transit' && v.ttab !== 'trips') h.set('ttab', v.ttab)
   if (v.trip) h.set('trip', v.trip)
@@ -65,7 +70,7 @@ function writeHash(v: View, cmp: string[]) {
   if (v.city) h.set('city', v.city)
   if (cmp.length) h.set('cmp', cmp.join(','))
   const s = h.toString()
-  if (s !== location.hash.slice(1)) history.pushState(null, '', s ? `#${s}` : location.pathname)
+  if (s !== location.hash.slice(1)) history[replace ? 'replaceState' : 'pushState'](null, '', s ? `#${s}` : location.pathname)
 }
 const readCmp = () => (new URLSearchParams(location.hash.slice(1)).get('cmp') ?? '').split(',').filter((id) => tripById.has(id)).slice(0, 3)
 
@@ -84,6 +89,9 @@ export default function App() {
   const [hoverEdge, setHoverEdge] = useState<string | null>(null)
   const [hoverDay, setHoverDay] = useState<number | null>(null)
   const [hoverAlt, setHoverAlt] = useState<string | null>(null)
+  const [hoverStay, setHoverStay] = useState<string | null>(null)
+  const [hoverRide, setHoverRide] = useState<string | null>(null)
+  const todo = useTodoDone()
   const [narrow, setNarrow] = useState(() => window.innerWidth < 860)
   const [sheet, setSheet] = useState(true)
   // 从地图上点开的详情不移动地图；从面板里点开的才把它带进视野
@@ -100,7 +108,8 @@ export default function App() {
   const go = useCallback((v: Partial<View>, fromMap = false) => {
     setView((cur) => {
       const next = { ...cur, ...v }
-      writeHash(next, cmp)
+      // 只换备选不算新的一步，免得后退要按很多次
+      writeHash(next, cmp, Object.keys(v).length === 1 && 'alt' in v)
       return next
     })
     setPickedOnMap(fromMap)
@@ -109,8 +118,8 @@ export default function App() {
 
   const switchLayer = (layer: Layer) => {
     if (layer === view.layer) return
-    setHoverEdge(null); setHoverPlace(null); setHoverTrip(null); setHoverDay(null); setHoverAlt(null)
-    go({ layer, place: null, edge: null, city: null })
+    setHoverEdge(null); setHoverPlace(null); setHoverTrip(null); setHoverDay(null); setHoverAlt(null); setHoverStay(null); setHoverRide(null)
+    go({ layer, place: null, edge: null, city: null, book: false })
   }
 
   const toggleCmp = (id: string) => {
@@ -124,6 +133,7 @@ export default function App() {
   }
 
   const isCity = view.layer === 'city'
+  const picked = useMemo(() => new Set(view.alt), [view.alt])
   const filtered = useMemo(() => filterTrips(tf), [tf])
   const inScope = useMemo(() => new Set(filtered.map((t) => t.id)), [filtered])
   const placeRows = useMemo(() => filterPlaces(pf, elems, filtered, regionOf), [pf, elems, filtered])
@@ -186,11 +196,9 @@ export default function App() {
     const areasAt = (ids: Iterable<string>) => [...ids].map((a) => areaAnchor.get(a)).filter((x): x is [number, number] => !!x)
     if (view.layer === 'plan') {
       if (!plan) return null
-      if (view.day != null) {
-        const alt = view.alt ? altsOf(plan).find((r) => r.key === view.alt) ?? null : null
-        return { key: `pd:${view.day}`, pts: dayPoints(plan, view.day, alt?.day.day === view.day ? alt : null), mode: 'fit', maxZoom: 12.5 }
-      }
-      return { key: 'pa', pts: mainStops(plan).map((x) => x.at), mode: 'fit' }
+      if (view.day != null) return { key: `pd:${view.day}`, pts: dayPoints(plan, view.day, picked), mode: 'fit', maxZoom: 12.5 }
+      // 全程只框北海道：北海道以外的那几天点进去再飞过去
+      return { key: 'pa', pts: mainStops(plan, picked).filter((x) => areaById.get(placeById.get(x.id)!.area)?.region).map((x) => x.at), mode: 'fit' }
     }
     if (isCity) {
       // 点地图上的单个地点：不缩放；从列表里点开的，只在它不在视野里时平移过去
@@ -204,12 +212,13 @@ export default function App() {
     if (openTrip) return { key: `xt:${openTrip.id}`, pts: areasAt(tripTransit.get(openTrip.id)!.chain), mode: 'reveal' }
     return null
     // eslint-disable-next-line react-hooks/exhaustive-deps
+    // 换备选不移动地图，免得一直跳，所以不依赖 picked
   }, [isCity, view.layer, view.day, view.place, view.edge, view.city, comparing, cmp, openTrip])
   const mapFocus = pickedOnMap ? null : focus
 
   const padding = narrow
     ? { left: 24, right: 24, top: 70, bottom: sheet ? Math.round(window.innerHeight * 0.5) : 90 }
-    : { left: 470, right: 40, top: 70, bottom: comparing ? Math.round(window.innerHeight * 0.48) : 40 }
+    : { left: 470, right: view.layer === 'plan' && view.book ? 500 : 40, top: 70, bottom: comparing ? Math.round(window.innerHeight * 0.48) : 40 }
 
   const pickPlace = (id: string, fromMap = false) => go({ place: id }, fromMap)
   const maxN = placeRows[0]?.n ?? 1
@@ -217,20 +226,28 @@ export default function App() {
   let panel: React.ReactNode
   const planDay = plan && view.day != null ? plan.days.find((d) => d.day === view.day) ?? null : null
   if (view.layer === 'plan') {
-    const toTrip = (id: string) => go({ layer: 'city', trip: id, place: null, day: null, alt: null })
-    const toPlace = (id: string) => go({ layer: 'city', place: id, trip: null, day: null, alt: null })
+    const toTrip = (id: string) => go({ layer: 'city', trip: id, place: null, day: null, alt: [], book: false })
+    const toPlace = (id: string) => go({ layer: 'city', place: id, trip: null, day: null, alt: [], book: false })
     if (!plan) panel = <p className="empty">atlas/plans 里还没有建议路线。</p>
     else if (planDay) {
       panel = (
         <PlanDayDetail
-          key={planDay.day} plan={plan} d={planDay} alt={view.alt}
+          key={planDay.day} plan={plan} d={planDay} picked={picked}
           onBack={() => go({ day: null })} onDay={(d) => go({ day: d })}
-          onAlt={(k) => go({ alt: k })} onHoverAlt={setHoverAlt}
+          onPick={(spot, k) => { setHoverAlt(null); go({ alt: pickAlt(view.alt, spot, k) }) }} onPreview={setHoverAlt}
+          onHoverPlace={setHoverStay} onHoverRide={setHoverRide}
           onTrip={toTrip} onPlace={toPlace}
         />
       )
     } else {
-      panel = <PlanOverview plan={plan} day={hoverDay} alt={view.alt} onDay={(d) => go({ day: d })} onHoverDay={setHoverDay} onTrip={toTrip} />
+      panel = (
+        <PlanOverview
+          plan={plan} picked={picked} day={hoverDay}
+          onDay={(d) => go({ day: d })} onHoverDay={setHoverDay} onTrip={toTrip}
+          onReset={() => go({ alt: [] })} onBookings={() => go({ book: true })}
+          todoLeft={(plan.todos ?? []).filter((t) => !todo.done.has(t.id)).length}
+        />
+      )
     }
   } else if (isCity) {
     const backLabel = view.trip ? '回到帖子' : view.tab === 'places' ? '全部地点' : '全部帖子'
@@ -343,9 +360,10 @@ export default function App() {
         onPickCity={(id) => go({ city: id, edge: null }, true)}
         plan={plan}
         planDay={view.day ?? hoverDay}
-        planAlt={hoverAlt ?? view.alt}
-        onPickAlt={(k) => go({ alt: k, day: Number(k.split('.')[0]) }, true)}
-        onHoverAlt={setHoverAlt}
+        planPicked={picked}
+        planPreview={hoverAlt}
+        planHover={hoverStay}
+        planRide={hoverRide}
         onPickPlanDay={(d) => go({ day: d }, true)}
       />
 
@@ -355,9 +373,23 @@ export default function App() {
           <span>北海道 · {trips.length} 篇小红书攻略 · {placeAgg.size} 个地点</span>
         </div>
         <div className="mast-actions">
+          {view.layer === 'plan' && plan?.todos && (
+            <button className={`pill ${view.book ? 'on' : ''}`} onClick={() => go({ book: !view.book })} aria-pressed={view.book}>
+              预订 · 待办
+              {(() => { const n = plan.todos!.filter((t) => !todo.done.has(t.id)).length; return n > 0 ? <i className="count-badge">{n}</i> : null })()}
+            </button>
+          )}
           {isCity && cmpTrips.length > 0 && !cmpOpen && (
             <button className="pill" onClick={() => setCmpOpen(true)}>
               对比 {cmpTrips.map((_, k) => <i key={k} style={{ background: palette.compare[k] }} />)} {cmpTrips.length}
+            </button>
+          )}
+          {sealed() && (
+            <button className="pill icon" onClick={() => { forget(); location.reload() }} aria-label="锁上：这台设备不再记住密码" title="锁上">
+              <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round" aria-hidden>
+                <rect x="3" y="7" width="10" height="7" rx="1.5" />
+                <path d="M5.5 7V5a2.5 2.5 0 0 1 5 0v2" />
+              </svg>
             </button>
           )}
           <button className="pill icon" onClick={toggle} aria-label={theme === 'dark' ? '切换到雪地主题' : '切换到蓝调主题'} title={theme === 'dark' ? '雪地' : '蓝调时刻'}>
@@ -416,11 +448,16 @@ export default function App() {
         </div>
       )}
 
+      {view.layer === 'plan' && plan && view.book && (
+        <Bookings plan={plan} done={todo.done} onToggle={todo.toggle} onDay={(d) => go({ day: d })} onClose={() => go({ book: false })} />
+      )}
+
       {view.layer === 'plan' && (
         <div className="legend" aria-hidden>
-          <span><i className="lg-line lg-plan" /> 主线</span>
+          <span><i className="lg-line lg-plan" /> 路线</span>
           <span><i className="lg-line lg-plan lg-dash" /> 跨城</span>
-          <span><i className="lg-line lg-alt" /> 备选分支</span>
+          <span><i className="lg-line lg-swap" /> 已换成备选</span>
+          {view.day != null && <span><i className="lg-line lg-alt" /> 还可以选的备选</span>}
           <span><i className="lg-stay" /> 住宿（第几晚）</span>
         </div>
       )}

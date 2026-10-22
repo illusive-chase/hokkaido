@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
-import { areaById, fmtCount, fmtDate, KIND_LABEL, placeById, textUrl } from '../data'
+import { areaById, fmtCount, fmtDate, KIND_LABEL, placeById, textPath } from '../data'
 import type { Trip } from '../types'
+import { localFile } from '../vault'
 import { Img, Lightbox, NoteLine, Section } from './bits'
 
 interface RawText {
@@ -75,7 +76,12 @@ export default function TripDetail({ t, onBack, onPlace, onHoverPlace, onCompare
   useEffect(() => {
     setRaw(null)
     setShowRaw(false)
-    fetch(textUrl(t.id)).then((r) => (r.ok ? r.json() : 'none')).then(setRaw).catch(() => setRaw('none'))
+    let live = true
+    localFile(textPath(t.id))
+      .then(async (b) => (b ? (JSON.parse(await b.text()) as RawText) : 'none' as const))
+      .catch(() => 'none' as const)
+      .then((r) => { if (live) setRaw(r) })
+    return () => { live = false }
   }, [t.id])
 
   const imgs = useMemo(() => t.src.images.map((_, k) => ({ trip: t.id, i: k + 1 })), [t])

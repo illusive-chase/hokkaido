@@ -9,6 +9,7 @@
     "captures": "node scripts/merge-captures.mjs",
     "read": "node scripts/xhs-read.mjs",
     "check": "node scripts/check-atlas.mjs",
+    "seal": "node scripts/seal.mjs",
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview"

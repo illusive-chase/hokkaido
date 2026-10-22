@@ -1,7 +1,7 @@
 import type { Feature, FeatureCollection, LineString, Point } from 'geojson'
-import { elemOf, placeAgg, placeById, type Elem } from '../data'
+import { areaById, elemOf, placeAgg, placeById, type Elem } from '../data'
 import { areaAnchor, type EdgeView } from '../transit'
-import { ALT_META, altAnchor, altsOf, mainStops, SLOT_LABEL } from '../plan'
+import { ALT_META, altAnchor, altsOf, effDay, mainStops, SLOT_LABEL, type PlanStop } from '../plan'
 import type { SgPlan, Trip } from '../types'
 
 type LngLat = [number, number]
@@ -216,15 +216,19 @@ export function netNodes(edges: Iterable<EdgeView>, names: Map<string, string>, 
 export interface PlanGeoOpts {
   /** 选中的一天；null 时看全程 */
   day: number | null
-  /** 选中的分支 key */
-  alt: string | null
-  /** 悬停的地点 */
+  /** 选中的备选（几天可以同时有） */
+  picked: Set<string>
+  /** 侧栏里悬停的备选：预览它的走法 */
+  preview: string | null
+  /** 侧栏里悬停的地点（住处、交通的两端） */
   hover: string | null
+  /** 侧栏里悬停的一段交通：天.序号 */
+  ride: string | null
 }
 
-/** 主路线：按顺序连起每个地点，跨区域的一段画粗一点；属于选中那天的点亮 */
+/** 主路线：按实际走的顺序连起每个地点（选了备选的按备选），跨区域的一段画粗一点；属于选中那天的点亮 */
 export function planLines(p: SgPlan, o: PlanGeoOpts): FeatureCollection<LineString> {
-  const seq = mainStops(p)
+  const seq = mainStops(p, o.picked)
   const features: Feature<LineString>[] = []
   for (let i = 1; i < seq.length; i++) {
     const a = seq[i - 1], b = seq[i]
@@ -232,7 +236,7 @@ export function planLines(p: SgPlan, o: PlanGeoOpts): FeatureCollection<LineStri
     const lit = o.day == null || b.day === o.day
     features.push({
       type: 'Feature',
-      properties: { day: b.day, cross, lit, dim: o.day != null && !lit },
+      properties: { day: b.day, cross, lit, dim: o.day != null && !lit, alt: b.alt },
       geometry: { type: 'LineString', coordinates: arc(a.at, b.at, cross ? 0.1 : 0.16) },
     })
   }
@@ -240,62 +244,70 @@ export function planLines(p: SgPlan, o: PlanGeoOpts): FeatureCollection<LineStri
   return { type: 'FeatureCollection', features }
 }
 
-/** 分支：从时段之前最后经过的地点接出去，依次连起分支里的地点 */
+/** 没选的备选：只在看某一天时画这一天的，侧栏悬停的那个加粗。只是参考，地图上不能点 */
 export function planAlts(p: SgPlan, o: PlanGeoOpts): FeatureCollection<LineString> {
   const features: Feature<LineString>[] = []
+  if (o.day == null && !o.preview) return { type: 'FeatureCollection', features }
   for (const r of altsOf(p)) {
+    if (o.picked.has(r.key)) continue
+    const hot = r.key === o.preview
+    if (!hot && r.day.day !== o.day) continue
     const from = altAnchor(p, r)
     const pts = r.alt.stops.map((id) => onMap(id)?.at).filter((x): x is LngLat => !!x)
     if (from) pts.unshift(from)
-    const sel = r.key === o.alt
-    const lit = sel || r.day.day === o.day
     for (let i = 1; i < pts.length; i++) {
       if (pts[i - 1][0] === pts[i][0] && pts[i - 1][1] === pts[i][1]) continue
       features.push({
         type: 'Feature',
-        properties: { key: r.key, day: r.day.day, kind: r.alt.kind, sel, lit, dim: o.day != null && !lit },
+        properties: { key: r.key, kind: r.alt.kind, hot },
         geometry: { type: 'LineString', coordinates: arc(pts[i - 1], pts[i], -0.2) },
       })
     }
   }
-  features.sort((x, y) => Number(x.properties!.lit) + Number(x.properties!.sel) - Number(y.properties!.lit) - Number(y.properties!.sel))
+  features.sort((x, y) => Number(x.properties!.hot) - Number(y.properties!.hot))
   return { type: 'FeatureCollection', features }
 }
 
-/** 路线上的地点（住处单独画）：选中那天的点放大并标名字；选中分支的地点也画出来 */
+/** 侧栏悬停的一段交通：从起点到终点画一条高亮线；两端都在地图外的不画 */
+export function planRide(p: SgPlan, o: PlanGeoOpts): FeatureCollection<LineString> {
+  const features: Feature<LineString>[] = []
+  if (o.ride) {
+    const [day, k] = o.ride.split('.').map(Number)
+    const r = p.days.find((d) => d.day === day)?.rides?.[k]
+    const a = r && onMap(r.from), b = r && onMap(r.to)
+    if (r && a && b) features.push({ type: 'Feature', properties: { mode: r.mode }, geometry: { type: 'LineString', coordinates: arc(a.at, b.at, 0.12) } })
+  }
+  return { type: 'FeatureCollection', features }
+}
+
+/** 路线上的地点（住处单独画）：选中那天的点放大并标名字；悬停预览的备选也画出它的地点 */
 export function planStops(p: SgPlan, o: PlanGeoOpts): FeatureCollection<Point> {
   const features: Feature<Point>[] = []
   const seen = new Set<string>()
   const stays = new Set(p.days.map((d) => d.stay).filter(Boolean))
+  const push = (id: string, day: number, when: string, alt: boolean, lit: boolean, rank: number) => {
+    const pl = onMap(id)
+    const k = `${id}|${day}`
+    if (!pl || seen.has(k) || stays.has(id)) return
+    seen.add(k)
+    const hl = id === o.hover
+    features.push({
+      type: 'Feature',
+      properties: { id, name: pl.name, day, when, alt, lit: lit || hl, label: lit || hl, rank: rank + (hl ? 3 : 0) },
+      geometry: { type: 'Point', coordinates: pl.at },
+    })
+  }
   for (const d of p.days) {
-    for (const s of d.slots) {
-      for (const id of s.stops) {
-        const pl = onMap(id)
-        const k = `${id}|${d.day}`
-        if (!pl || seen.has(k) || stays.has(id)) continue
-        seen.add(k)
-        const lit = d.day === o.day || id === o.hover
-        features.push({
-          type: 'Feature',
-          properties: { id, name: pl.name, day: d.day, when: `D${d.day} · ${SLOT_LABEL[s.slot]}`, alt: false, lit, label: lit, rank: lit ? 1 : 0 },
-          geometry: { type: 'Point', coordinates: pl.at },
-        })
-      }
+    for (const s of effDay(d, o.picked).slots) {
+      const when = `D${d.day} · ${SLOT_LABEL[s.slot.slot]}${s.alt ? ` · ${ALT_META[s.alt.kind].label}` : ''}`
+      for (const id of s.stops) push(id, d.day, when, false, d.day === o.day, d.day === o.day ? 1 : 0)
     }
+    // 当天交通的两端（车站、机场）也画出来，悬停交通时看得到在哪
+    if (d.day === o.day) for (const r of d.rides ?? []) for (const id of [r.from, r.to]) push(id, d.day, `D${d.day} · 交通`, false, true, 1)
   }
   for (const r of altsOf(p)) {
-    if (r.key !== o.alt && r.day.day !== o.day) continue
-    for (const id of r.alt.stops) {
-      const pl = onMap(id)
-      if (!pl || seen.has(`${id}|${r.day.day}`)) continue
-      seen.add(`${id}|${r.day.day}`)
-      const sel = r.key === o.alt
-      features.push({
-        type: 'Feature',
-        properties: { id, name: pl.name, day: r.day.day, when: `D${r.day.day} 备选 · ${ALT_META[r.alt.kind].label}`, alt: true, lit: sel, label: sel || id === o.hover, rank: sel ? 2 : 0 },
-        geometry: { type: 'Point', coordinates: pl.at },
-      })
-    }
+    if (r.key !== o.preview || o.picked.has(r.key)) continue
+    for (const id of r.alt.stops) push(id, r.day.day, `D${r.day.day} 备选 · ${ALT_META[r.alt.kind].label}`, true, true, 2)
   }
   features.sort((x, y) => (x.properties!.rank as number) - (y.properties!.rank as number))
   return { type: 'FeatureCollection', features }
@@ -318,18 +330,23 @@ export function planStays(p: SgPlan, o: PlanGeoOpts, areaNames: Map<string, stri
         type: 'Feature',
         properties: {
           id, kind: 'stay', mark: first === last ? String(first) : `${first}–${last}`,
-          name: `${areaNames.get(pl.area) ?? pl.name} · ${last - first + 1} 晚`, day: first, lit, dim: !lit,
+          name: pl.name, nights: last - first + 1, day: first, lit, dim: !lit, hl: id === o.hover,
+          // 看全程时标区域和晚数，看某一天或者悬停时标酒店名
+          label: o.day != null || id === o.hover ? pl.name : `${areaNames.get(pl.area) ?? pl.name} · ${last - first + 1} 晚`,
         },
         geometry: { type: 'Point', coordinates: pl.at },
       })
     }
     k = j + 1
   }
-  for (const [id, mark, day] of [[p.in, '进', p.days[0].day], [p.out, '出', p.days[p.days.length - 1].day]] as const) {
-    const pl = onMap(id)
-    if (!pl) continue
-    const lit = o.day == null || o.day === day
-    features.push({ type: 'Feature', properties: { id, kind: 'end', mark, name: pl.name, day, lit, dim: !lit }, geometry: { type: 'Point', coordinates: pl.at } })
+  // 进出北海道的机场：路线上第一个、最后一个北海道的机场
+  const airports = mainStops(p, o.picked).filter((s) => placeById.get(s.id)?.kind === 'airport' && areaById.get(placeById.get(s.id)!.area)?.region)
+  const ends: [PlanStop | undefined, string][] = [[airports[0], '进'], [airports.at(-1), '出']]
+  for (const [s, mark] of ends) {
+    if (!s) continue
+    const pl = onMap(s.id)!
+    const lit = o.day == null || o.day === s.day
+    features.push({ type: 'Feature', properties: { id: s.id, kind: 'end', mark, name: pl.name, label: pl.name, day: s.day, lit, dim: !lit, hl: s.id === o.hover }, geometry: { type: 'Point', coordinates: pl.at } })
   }
   return { type: 'FeatureCollection', features }
 }

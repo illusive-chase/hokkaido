@@ -1,0 +1,3 @@
+[submodule "atlas"]
+	path = atlas
+	url = git@github.com:illusive-chase/hokkaido-atlas.git
