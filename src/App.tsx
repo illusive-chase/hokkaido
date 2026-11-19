@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import MapView, { type Focus, type Layer } from './map/MapView'
 import type { RouteSpec } from './map/geo'
-import { areaById, areas, ELEM_LABEL, ELEMS, placeAgg, placeById, tripById, trips, type Elem } from './data'
+import { areaById, areas, ELEM_LABEL, ELEMS, onCityMap, placeAgg, placeById, tripById, trips, type Elem } from './data'
 import { filterPlaces, filterTransit, filterTrips, type PlaceFilter, type TransitFilter, type TripFilter } from './filters'
 import { allEdges, areaAnchor, buildEdges, tripTransit } from './transit'
 import { PALETTES, useTheme } from './theme'
@@ -192,7 +192,8 @@ export default function App() {
 
   // —— 视野 ——
   const focus = useMemo<Focus | null>(() => {
-    const at = (ids: Iterable<string>) => [...ids].map((id) => placeById.get(id)).filter((p) => p && !p.offmap).map((p) => p!.at)
+    // 城市内图层只框北海道的地点；只写了大阪、羽田的帖子不移动地图
+    const at = (ids: Iterable<string>) => [...ids].map((id) => placeById.get(id)).filter((p) => p && onCityMap(p)).map((p) => p!.at)
     const areasAt = (ids: Iterable<string>) => [...ids].map((a) => areaAnchor.get(a)).filter((x): x is [number, number] => !!x)
     if (view.layer === 'plan') {
       if (!plan) return null

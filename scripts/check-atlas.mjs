@@ -10,7 +10,8 @@ const KINDS = new Set(['itinerary', 'daytrip', 'pilgrimage', 'guide', 'review', 
 const PLACE_KINDS = new Set(['town', 'sight', 'station', 'airport', 'food', 'stay'])
 const TONES = new Set(['good', 'warn', 'meh', 'info'])
 const FROM = new Set(['post', 'comment', 'editor'])
-const TRIP_KEYS = new Set(['kind', 'summary', 'days', 'when', 'season', 'bases', 'in', 'out', 'style', 'budget', 'partial', 'commercial', 'plan', 'photos', 'notes', 'tips', 'ratings', 'legs'])
+const TRIP_KEYS = new Set(['read', 'topics', 'kind', 'summary', 'days', 'when', 'season', 'bases', 'in', 'out', 'style', 'budget', 'partial', 'commercial', 'plan', 'photos', 'notes', 'tips', 'ratings', 'legs'])
+const TOPIC_KEYS = new Set(['id', 'name', 'alias', 'hint', 'areas', 'tips', 'kinds', 'themes', 'match', 'legs', 'allTips'])
 const MODES = new Set(['jr', 'bus', 'shuttle', 'car', 'charter', 'tour', 'flight', 'taxi'])
 /** 建议路线的每日交通还可以写市电、地铁、缆车 */
 const RIDE_MODES = new Set([...MODES, 'tram', 'subway', 'ropeway'])
@@ -45,6 +46,34 @@ export async function validate() {
     }
   }
 
+  // 主题：地方主题按区域分，北海道的每个区域都要归到一个地方主题里，免得新区域的帖子没处归
+  const topicIds = new Set()
+  const topicPath = join(ATLAS, 'topics.json')
+  if (!existsSync(topicPath)) out.push('缺 atlas/topics.json')
+  else {
+    const tp = await readJson(topicPath)
+    const owner = new Map()
+    for (const [type, list] of [['place', tp.places ?? []], ['subject', tp.subjects ?? []]]) for (const t of list) {
+      const at = `topics.json ${t.id}`
+      if (!/^[a-z][a-z0-9-]*$/.test(t.id ?? '') || topicIds.has(t.id)) out.push(`${at}：id 应是不重复的英文短名`)
+      topicIds.add(t.id)
+      if (!t.name) out.push(`${at}：缺 name`)
+      for (const k of Object.keys(t)) if (!TOPIC_KEYS.has(k)) out.push(`${at}：未知字段 ${k}`)
+      if (t.match) try { new RegExp(t.match) } catch { out.push(`${at}：match 不是合法的正则`) }
+      for (const k of t.kinds ?? []) if (!PLACE_KINDS.has(k)) out.push(`${at}：kinds 里的未知地点类型 ${k}`)
+      for (const th of t.themes ?? []) if (!themeSet.has(th)) out.push(`${at}：themes 里的未知主题 ${th}`)
+      if (type === 'place') {
+        if (!t.areas?.length) out.push(`${at}：地方主题要写 areas`)
+        for (const a of t.areas ?? []) {
+          if (!areaIds.has(a)) out.push(`${at}：未知区域 ${a}`)
+          else if (owner.has(a)) out.push(`${at}：区域 ${a} 已经归在 ${owner.get(a)} 下面`)
+          owner.set(a, t.id)
+        }
+      } else if (t.areas) out.push(`${at}：专题不按区域分，不要写 areas`)
+    }
+    for (const a of areas) if (a.region !== null && !owner.has(a.id)) out.push(`topics.json：北海道的区域 ${a.id} 没有归到任何地方主题`)
+  }
+
   const sources = existsSync(join(ATLAS, 'sources.json')) ? await readJson(join(ATLAS, 'sources.json')) : {}
   const place = (at, id) => { if (!places.has(id)) out.push(`${at}：未知地点 ${id}`) }
   for (const f of (await readdir(join(ATLAS, 'trips'))).filter((f) => f.endsWith('.json'))) {
@@ -56,6 +85,10 @@ export async function validate() {
     for (const k of Object.keys(t)) if (!TRIP_KEYS.has(k)) out.push(`${at}：未知字段 ${k}`)
     if (!KINDS.has(t.kind)) out.push(`${at}：kind 不合法 ${t.kind}`)
     if (!t.summary) out.push(`${at}：缺 summary`)
+    if (!t.topics?.length) out.push(`${at}：缺 topics（atlas/topics.json 里的主题 id，至少一个）`)
+    for (const x of t.topics ?? []) if (!topicIds.has(x)) out.push(`${at}：topics 里的未知主题 ${x}`)
+    if (new Set(t.topics ?? []).size !== (t.topics ?? []).length) out.push(`${at}：topics 有重复`)
+    if (t.read && (!/^\d{4}-\d{2}-\d{2}$/.test(t.read.at ?? '') || typeof t.read.comments !== 'number' || typeof t.read.ocr !== 'boolean')) out.push(`${at}：read 应是 { at: YYYY-MM-DD, comments: 数字, ocr: true/false }（用 npm run -s read -- done 写）`)
     for (const b of t.bases ?? []) if (!areaIds.has(b)) out.push(`${at}：bases 里的未知区域 ${b}`)
     if (t.in) place(at, t.in)
     if (t.out) place(at, t.out)

@@ -13,6 +13,8 @@ export const places: Place[] = Object.values(placeFiles).flat()
 export const placeById = new Map(places.map((p) => [p.id, p]))
 
 const regionOf = (placeId: string) => areaById.get(placeById.get(placeId)?.area ?? '')?.region ?? null
+/** 城市内图层只画北海道的地点：北海道以外（区域的 region 是 null，如大阪、羽田）的只在建议路线里画 */
+export const onCityMap = (p: Place) => !p.offmap && !!areaById.get(p.area)?.region
 
 function buildTrip(id: string, a: TripAnno): Trip {
   const route: string[] = []

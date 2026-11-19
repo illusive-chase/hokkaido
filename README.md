@@ -7,36 +7,46 @@
 ```
 data/notes/        ① 下载：帖子原样（正文、图片、前 5 条评论），不进 git   scripts/xhs-fetch.mjs
 data/captures/     ① 补全评论：登录后浏览时用插件存下的完整评论，不进 git  extension/
-atlas/             ② 整理：行程、地点、坐标、经验摘要，私有 submodule      人工 / Claude 读帖子后编写
+data/ocr/          ① 图片文字：帖子图片里识别出的文字，不进 git            scripts/ocr.mjs
+atlas/             ② 整理：行程、地点、坐标、经验摘要、主题，私有 submodule  人工 / Claude 读帖子后编写
 local/             ③ 生成：网页用的图片（统一 jpg）和原文，不进 git          scripts/build-site-data.mjs
 public/vault/      ④ 加密：atlas/ 和 local/ 的密文，进 git，公开部署        scripts/seal.mjs
 src/               网页（React + Vite + MapLibre）
-scripts/xhs-read.mjs  给人和 agent 读帖子用的命令行，把 ① 的原始数据转成精简的纯文本
+scripts/xhs-read.mjs     给人和 agent 读帖子用的命令行，把 ① 的原始数据转成精简的纯文本
+scripts/atlas-topic.mjs  按主题读 ② 里已经整理好的经验，不用重读原帖
 ```
 
 ## 协作方式
 
+每篇帖子只精读一次，读完把要点写进 `atlas/trips/<noteId>.json` 并记下读到了哪；之后不管是排路线还是回答问题，都先按主题读整理好的摘要，摘要不够再回原帖查。
+
 1. 人类把小红书链接贴进 `data/links.txt`，运行 `npm run fetch` 下载（见下文「下载流程」）。
    评论多、值得细看的帖子，再用插件补全评论（见下文「用插件补全评论」）。
-2. Claude 用 `npm run -s read` 读帖子（见下文「读帖子：`xhs-read`」），**不要直接 cat `note.json` / `comments.json`**。
-   在 `atlas/trips/<noteId>.json` 写这篇的行程、城际交通（`legs`）、经验和照片对应；用到的新地点加进 `atlas/places/*.json`（坐标用 OSM Nominatim 查，查不到的标 `approx: true`）。
-3. 运行 `npm run data` 生成 `atlas/sources.json` 和 `local/`，同时校验所有引用。
-4. `npm run dev` 打开网页查看。
-5. 要发布时运行 `npm run seal` 更新 `public/vault/`，先提交 `atlas/` 子仓库，再提交主仓库（见下文「加密与发布」）。
+2. 运行 `npm run ocr`，把新帖子图片里的文字识别出来（攻略图、时刻表、价目表里的信息很多只在图上）。只处理新图，几十篇一两分钟。
+3. Claude 运行 `npm run -s read -- todo`，看哪些帖子还没读、哪些整理后又采到了新评论或图片文字（见下文「读帖子：`xhs-read`」），一篇篇读，**不要直接 cat `note.json` / `comments.json`**。
+   在 `atlas/trips/<noteId>.json` 写这篇的主题（`topics`）、行程、城际交通（`legs`）、经验和照片对应；用到的新地点加进 `atlas/places/*.json`（坐标用 OSM Nominatim 查，查不到的标 `approx: true`）。
+   整理完运行 `npm run -s read -- done <id …>`，在文件里记下读到了多少条评论、读没读图片文字（`read` 字段）。帖子多时按主题分批读，同一批的帖子互相印证。
+4. 运行 `npm run data` 生成 `atlas/sources.json` 和 `local/`，同时校验所有引用（每篇都要有主题）。
+5. 要用这些经验时（排建议路线、回答「函馆机场怎么去市区」），先 `npm run -s topic -- <主题>` 读摘要（见下文「按主题检索：`atlas-topic`」），需要原话、楼层或没整理进去的细节，再用 `npm run -s read -- grep … --topic <主题>` 回原帖。
+6. `npm run dev` 打开网页查看。
+7. 要发布时运行 `npm run seal` 更新 `public/vault/`，先提交 `atlas/` 子仓库，再提交主仓库（见下文「加密与发布」）。
 
 ## 读帖子：`xhs-read`
 
 `note.json` 和 `comments.json` 里大半是头像地址、用户 ID、带签名的链接、重复的回复关系，直接读既费 context 又难看清楼层。
-`scripts/xhs-read.mjs` 把正文和评论合并、去噪后按「一楼一行」打印成纯文本：插件采集评论最多的一篇（6785e650，363 条）原始 JSON 约 320KB，`--brief` 输出约 40KB。
+`scripts/xhs-read.mjs` 把正文、图片文字和评论合并、去噪后按「一楼一行」打印成纯文本：插件采集评论最多的一篇（6785e650，363 条）原始 JSON 约 320KB，`--brief` 输出约 40KB。
 评论的合并方式和网页（`npm run data`）相同，都走 `scripts/lib/notes.mjs`：插件采集的完整评论优先，再补上 `note.json` 里它没有的几条。
 
 ```bash
-npm run -s read -- list                       # 所有帖子一览：评论采集情况、图片数、是否已整理进 atlas
-npm run -s read -- 6785e6 --brief             # 读一篇（ID 写前 6 位以上即可），正文 + 全部评论
+npm run -s read -- todo                       # 还要读的帖子：没整理过、整理后又采到新评论、图片文字多但没读过
+npm run -s read -- list                       # 所有帖子一览：评论采集情况、图片数、图片文字字数、读到了哪
+npm run -s read -- 6785e6 --brief             # 读一篇（ID 写前 6 位以上即可），正文 + 图片文字 + 全部评论
 npm run -s read -- 6785e6 --no-desc --sort likes --top 30 --replies 5   # 先看最高赞的 30 楼，每楼最多 5 条回复
 npm run -s read -- 6785e6 --author            # 只看作者参与的楼（作者回复往往是最可靠的补充）
 npm run -s read -- 6785e6 --grep 'JR|巴士|打车'   # 只看提到交通的楼
-npm run -s read -- grep '周游券|JR ?pass'      # 跨所有帖子搜索；也可以在后面列几个 ID 限定范围
+npm run -s read -- grep '周游券|JR ?pass'      # 跨所有帖子搜索正文、图片文字和评论；也可以在后面列几个 ID 限定范围
+npm run -s read -- grep '末班|时刻' --topic 函馆  # 只在某个主题的帖子里搜（list、todo 也能加 --topic）
+npm run -s read -- done 6785e6 6aab69          # 整理完以后，在 trips/<id>.json 里记下读到了哪
 ```
 
 输出格式：
@@ -44,11 +54,14 @@ npm run -s read -- grep '周游券|JR ?pass'      # 跨所有帖子搜索；也�
 ```
 ━━ <noteId>  <标题>
 作者 … · 发布 … · 赞 … 藏 … 评 … · 图 N 张
-atlas trips/<id 前 8 位>….json：itinerary · 9 天 · plan 8 · legs 8 · notes 8 · tips 5     ← 已整理到什么程度
+atlas trips/<id 前 8 位>….json：itinerary · 9 天 · plan 8 · legs 8 · notes 8 · tips 5 · 主题 … · 2026-10-23 读到 132 条评论和图片文字   ← 已整理到什么程度
 评论 插件采集 132/189（一级 50/65 未到底，17 楼回复没展开完）                         ← 评论是否完整
 
 ── 正文（1002 字）
 ……（话题标签已去掉，表情代码已去掉）
+
+── 图片文字（14 张里 9 张有字，1734 字；机器识别，可能有错字、顺序可能乱）
+[图3] 关西机场（第1航站楼 5号站台） 大阪站前 / 上午6点至晚间23点 / …   ← 一张图一行，行与行之间用 / 隔开
 
 ── 评论（显示 50 楼、82 条回复；折叠 3 条无内容评论，--all 显示）
 [1] 昵称 【作者·置顶】 ♥7 广东 26-07-21｜内容 [图×1]
@@ -60,8 +73,45 @@ atlas trips/<id 前 8 位>….json：itinerary · 9 天 · plan 8 · legs 8 · n
 - 默认折叠只有「码住」「好美」「@某人」这类无内容评论和 AI 助手回复；`--all` 全部显示。
 - `--brief` 去掉每条的 IP 属地和日期，再省三成左右。
 - 「回复没采集」是插件保存时还没展开的楼，需要的话回网页上展开后再保存一次。
+- 图片文字是 macOS 自带的 Vision 识别的，表格会被拆成一列列、错字不少（「函館」可能变成「函鮪」），数字和时刻要对照原图（`data/notes/<id>/images/`）或官网核实。整张图不到 8 个字的（招牌、背景）不显示；`--no-ocr` 不打印。
+- `todo` 判断「要读」的规则：没有 `trips/<id>.json`；有但没有 `read` 字段；插件采到的评论比 `read.comments` 多；图片文字 300 字以上但 `read.ocr` 是 `false`。
 
-读一篇的建议顺序：先 `list` 看规模；评论少的直接读全文；评论多的先 `--no-desc --sort likes --top 30` 看高赞，再 `--author` 看作者回复，最后用 `--grep` 按主题（交通、住宿、某个地名）补漏。
+读一篇的建议顺序：先 `todo` 看还剩哪些；评论少的直接读全文；评论多的先 `--no-desc --sort likes --top 30` 看高赞，再 `--author` 看作者回复，最后用 `--grep` 按主题（交通、住宿、某个地名）补漏。图片文字多的帖子（时刻表、攻略长图）先看图片文字，往往比正文信息多。
+
+### 图片文字：`npm run ocr`
+
+`scripts/ocr.mjs` 用 macOS 自带的 Vision 识别 `data/notes/<id>/images/` 里每张图的文字（简中、日文、英文），存成 `data/ocr/<id>.json`（`{ images: [{ file, bytes, lines[] }] }`）。不需要联网，也不用装别的；第一次运行时把 `scripts/ocr/ocr.swift` 编译到 `node_modules/.cache/hokkaido/ocr`。文件大小没变的图不会重新识别，所以下载新帖子后直接再跑一遍；`npm run ocr -- <id 前缀>` 只处理几篇，`--force` 全部重来。只能在 macOS 上运行。
+
+## 按主题检索：`atlas-topic`
+
+`atlas/topics.json` 定义了两类主题，一篇帖子可以同时属于好几个：
+
+- **地方**：札幌（含新千岁、定山溪）、小樽、函馆、洞爷·登别、旭川·美瑛·富良野、道东、大阪·关西、东京·羽田。每个地方主题列出它包含的区域（`areas.json` 的 id），北海道的每个区域都要归到某一个地方主题下，新加区域时 `npm run check` 会提醒。
+- **专题**：行李寄送·黑猫、机场·入境·转机、交通·车票、住宿·订酒店、美食、装备·天气·季节、支付·购物·预算、行程规划、情书·巡礼、通用经验。
+
+`scripts/atlas-topic.mjs` 按主题把所有帖子整理好的经验汇总成一份纯文本，不碰原帖：
+
+```bash
+npm run -s topic                       # 主题一览：每个主题多少篇帖子、多少条地点经验、城际交通、通用建议
+npm run -s topic -- 函馆               # 一个主题的摘要：帖子列表（按收藏数），再按地点列经验，按路段列交通，按类别列建议
+npm run -s topic -- 函馆 交通          # 写两个取交集：函馆的交通经验
+npm run -s topic -- 黑猫 --posts       # 只列帖子，再挑几篇用 read 看原文
+```
+
+主题可以写名字、id 或别名（`黑猫` / `宅急便` / `luggage` 都行）。每条后面的 `‹6acef507›` 是出处帖子 ID 的前 8 位，写建议路线的 `refs` 时直接用。
+
+一条经验算进哪个主题，规则写在 `topics.json` 里：
+
+| 字段 | 含义 |
+|---|---|
+| `areas` | 地方主题：地点在这些区域里的经验（`notes`）、一端在这些区域的城际交通（`legs`）都算；不针对地点的建议（`tips`）只在帖子只标了这一个地方时才算 |
+| `kinds` | 专题：地点是这些类型的经验都算（交通算车站和机场，住宿算 `stay`，美食算 `food`） |
+| `tips` | 专题：`tips[].topic` 是这些类别的建议都算 |
+| `themes` | 专题：地点带这些主题标签的经验都算（情书·巡礼） |
+| `match` | 专题：文字里命中这个正则的经验、交通、建议都算（黑猫：`黑猫\|宅急便\|寄行李…`） |
+| `legs` / `allTips` | 所有城际交通都算（交通·车票）/ 所有不针对地点的建议都算（通用经验） |
+
+帖子列表按 `trips/<id>.json` 的 `topics` 字段来，经验按上面的规则来，所以没标某个主题的帖子，只要有一条经验对上规则也会出现在摘要里。网页不读 `topics`，只给 agent 和人检索用。
 
 ## 网页
 
@@ -146,6 +196,8 @@ GitHub Actions 不拉 `atlas/` 子仓库，只用提交进来的 `public/vault/`
 
 | 字段 | 说明 |
 |---|---|
+| `read` | 读到了哪：`{ at, comments, ocr }`，整理那天、当时读到的评论条数（一级加回复）、读没读图片文字。用 `npm run -s read -- done <id>` 写，`todo` 靠它判断要不要重读 |
+| `topics` | 这篇属于哪些主题，`atlas/topics.json` 里的 id，至少一个。去过、写到的地方和讲到的专题都标上 |
 | `kind` | `itinerary` 多日行程、`daytrip` 一日游、`pilgrimage` 巡礼、`guide` 经验、`review` 点评、`question` 提问 |
 | `summary` | 一两句话概括这篇的思路，卡片上显示 |
 | `days` / `when` | 天数 / 出行时间（原帖写了才填） |
@@ -156,7 +208,7 @@ GitHub Actions 不拉 `atlas/` 子仓库，只用提交进来的 `public/vault/`
 | `plan[]` | `{ day, label?, title, stops[], stay?, move? }`：每天的标题、按顺序经过的地点、住宿、交通方式。地图上的路线由它画出 |
 | `photos[]` | `{ place, img[] }`：第几张图（从 1 开始）拍的是哪个地点 |
 | `notes[]` | `{ place, tone, text, from }`：针对某个地点的经验。`tone` 是 `good` 推荐 / `warn` 注意 / `meh` 觉得一般 / `info` 信息；`from` 是 `post` 正文 / `comment` 评论区 / `editor` 整理者注 |
-| `tips[]` | `{ topic, text, from }`：不针对具体地点的建议，`topic` 如「交通」「装备」「住宿」 |
+| `tips[]` | `{ topic, text, from }`：不针对具体地点的建议，`topic` 如「交通」「行李」「机场」「装备」「住宿」「路线」「其他」（主题按这个归类，见「按主题检索」） |
 | `ratings[]` | `{ place, score, label }`：点评帖的打分（`score` 0–5） |
 | `legs[]` | 城际交通，城际通行图层的边由它和 `plan` 一起算出，见下表 |
 
@@ -392,6 +444,7 @@ data/
 ├── links.txt                 # 人工维护：要下载的链接，一行一条
 ├── index.json                # 脚本维护：链接 → 抓取结果
 ├── captures/                 # 插件写入的完整评论，见「用插件补全评论」
+├── ocr/                      # npm run ocr 写入的图片文字，一篇一个 <noteId>.json，见「图片文字」
 └── notes/
     └── <noteId>/             # 一篇帖子一个目录，noteId 是 24 位十六进制字符串
         ├── note.json         # 归一化后的帖子数据（下游读这个）

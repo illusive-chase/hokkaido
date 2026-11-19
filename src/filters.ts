@@ -1,4 +1,4 @@
-import { areaById, elemOf, placeAgg, placeById, trips, type Elem } from './data'
+import { areaById, elemOf, onCityMap, placeAgg, placeById, trips, type Elem } from './data'
 import { hasTransit, tripTransit } from './transit'
 import type { Place, TransitMode, Trip, TripKind } from './types'
 
@@ -56,7 +56,7 @@ export function filterPlaces(f: PlaceFilter, elems: Set<Elem>, within: Trip[], r
   const rows: PlaceRow[] = []
   for (const agg of placeAgg.values()) {
     const p = agg.place
-    if (p.offmap) continue
+    if (!onCityMap(p)) continue
     if (!elems.has(elemOf(p.kind))) continue
     if (f.theme && !p.themes.includes(f.theme)) continue
     if (f.regions.size && !f.regions.has(regionOf(p) ?? '')) continue

@@ -1,5 +1,5 @@
 import type { Feature, FeatureCollection, LineString, Point } from 'geojson'
-import { areaById, elemOf, placeAgg, placeById, type Elem } from '../data'
+import { areaById, elemOf, onCityMap, placeAgg, placeById, type Elem } from '../data'
 import { areaAnchor, type EdgeView } from '../transit'
 import { ALT_META, altAnchor, altsOf, effDay, mainStops, SLOT_LABEL, type PlanStop } from '../plan'
 import type { SgPlan, Trip } from '../types'
@@ -7,11 +7,12 @@ import type { SgPlan, Trip } from '../types'
 type LngLat = [number, number]
 const onMap = (id: string) => { const p = placeById.get(id); return p && !p.offmap ? p : null }
 
-/** 把一条行程的每天拼成一串地点，去掉相邻重复和地图外的地点（例如东京） */
+/** 把一条行程的每天拼成一串地点，去掉相邻重复和北海道以外的地点（例如东京、大阪） */
 export function legs(trip: Trip): [string, string][] {
+  const onCity = (id: string) => { const p = placeById.get(id); return !!p && onCityMap(p) }
   const seq: string[] = []
-  for (const s of trip.segments) for (const id of s.ids) if (onMap(id) && seq[seq.length - 1] !== id) seq.push(id)
-  if (trip.in && onMap(trip.in) && seq[0] !== trip.in) seq.unshift(trip.in)
+  for (const s of trip.segments) for (const id of s.ids) if (onCity(id) && seq[seq.length - 1] !== id) seq.push(id)
+  if (trip.in && onCity(trip.in) && seq[0] !== trip.in) seq.unshift(trip.in)
   const out: [string, string][] = []
   for (let i = 1; i < seq.length; i++) out.push([seq[i - 1], seq[i]])
   return out
@@ -91,7 +92,7 @@ export function placePoints(o: PlacePointOpts): FeatureCollection<Point> {
   const features: Feature<Point>[] = []
   for (const [id, agg] of placeAgg) {
     const p = agg.place
-    if (p.offmap) continue
+    if (!onCityMap(p)) continue
     const elem = elemOf(p.kind)
     const hl = o.highlight.get(id)
     // 关掉的元素不画；但正在看的行程经过它、或者选中了它，还是要画出来

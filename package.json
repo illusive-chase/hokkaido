@@ -8,6 +8,8 @@
     "data": "node scripts/build-site-data.mjs",
     "captures": "node scripts/merge-captures.mjs",
     "read": "node scripts/xhs-read.mjs",
+    "ocr": "node scripts/ocr.mjs",
+    "topic": "node scripts/atlas-topic.mjs",
     "check": "node scripts/check-atlas.mjs",
     "seal": "node scripts/seal.mjs",
     "dev": "vite",
